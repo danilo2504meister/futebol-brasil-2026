@@ -4,20 +4,49 @@ import pandas as pd
 st.set_page_config(page_title="Futebol Brasil 2026", layout="wide")
 
 # ========================
+# ESTILO MODERNO
+# ========================
+st.markdown("""
+<style>
+body {
+    background-color: #f4f6f9;
+}
+.block-container {
+    padding-top: 2rem;
+}
+.card {
+    background: white;
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    box-shadow: 0px 2px 8px rgba(0,0,0,0.08);
+}
+.score {
+    font-size: 22px;
+    font-weight: bold;
+    text-align: center;
+}
+.team {
+    font-weight: 600;
+}
+</style>
+""", unsafe_allow_html=True)
+
+# ========================
 # FUNÇÕES
 # ========================
 def limpar(df):
     df.columns = df.columns.str.strip().str.upper()
     return df
 
-def formatar_time(nome):
+def formatar(nome):
     if isinstance(nome, str) and "-" in nome:
         nome, uf = nome.split("-")
         return f"{nome.title()} ({uf})"
     return nome
 
 # ========================
-# CARREGAR
+# DADOS
 # ========================
 @st.cache_data(ttl=60)
 def carregar():
@@ -28,17 +57,14 @@ def carregar():
 
 cal, art, cla = carregar()
 
-# formatar nomes
-cal["MANDANTE"] = cal["MANDANTE"].apply(formatar_time)
-cal["VISITANTE"] = cal["VISITANTE"].apply(formatar_time)
-cla["EQUIPE"] = cla["EQUIPE"].apply(formatar_time)
-art["CLUBE"] = art["CLUBE"].apply(formatar_time)
+cal["MANDANTE"] = cal["MANDANTE"].apply(formatar)
+cal["VISITANTE"] = cal["VISITANTE"].apply(formatar)
 
 st.title("⚽ Futebol Brasil 2026")
 
 pagina = st.sidebar.radio(
     "Menu",
-    ["🏠 Home", "📊 Resultados", "🥇 Artilheiros", "📈 Classificação"]
+    ["🏠 Home", "📊 Jogos", "🥇 Artilheiros", "📈 Classificação"]
 )
 
 # ========================
@@ -55,31 +81,12 @@ if pagina == "🏠 Home":
     col2.metric("Jogos", total_jogos)
     col3.metric("Média", media)
 
-    st.divider()
-
-    time_jogos = cla.sort_values(by="J", ascending=False).iloc[0]["EQUIPE"]
-    time_vitorias = cla.sort_values(by="V", ascending=False).iloc[0]["EQUIPE"]
-
-    gols_time = cal.groupby("MANDANTE")["GM"].sum()
-    time_gols = gols_time.idxmax()
-
-    art["GOLS"] = pd.to_numeric(art["GOLS"], errors="coerce").fillna(0).astype(int)
-    artilheiro = art.sort_values(by="GOLS", ascending=False).iloc[0]
-
-    col4, col5 = st.columns(2)
-    col6, col7 = st.columns(2)
-
-    col4.metric("Mais Jogos", time_jogos)
-    col5.metric("Mais Vitórias", time_vitorias)
-    col6.metric("Mais Gols", time_gols)
-    col7.metric("Artilheiro", f"{artilheiro['Z']} ({artilheiro['GOLS']})")
+    st.markdown('<div class="card">Espaço para publicidade</div>', unsafe_allow_html=True)
 
 # ========================
-# RESULTADOS
+# JOGOS (ESTILO APP)
 # ========================
-elif pagina == "📊 Resultados":
-
-    st.subheader("Resultados")
+elif pagina == "📊 Jogos":
 
     df = cal.copy()
 
@@ -90,11 +97,11 @@ elif pagina == "📊 Resultados":
     col1, col2 = st.columns(2)
 
     with col1:
-        data = st.date_input("Filtrar por data")
+        data = st.date_input("Data")
 
     with col2:
         time = st.selectbox(
-            "Buscar time",
+            "Time",
             ["Todos"] + sorted(df["MANDANTE"].dropna().unique())
         )
 
@@ -107,14 +114,18 @@ elif pagina == "📊 Resultados":
     df = df.sort_values(by="DATA", ascending=False)
 
     for _, row in df.iterrows():
-        col1, col2, col3 = st.columns([3,1,3])
-
-        col1.write(row["MANDANTE"])
-        col2.write(f"{row['GM']} x {row['GV']}")
-        col3.write(row["VISITANTE"])
-
-        st.caption(f"{row['DATA']} | {row.get('CAMPEONATO','')}")
-        st.divider()
+        st.markdown(f"""
+        <div class="card">
+            <div style="display:flex; justify-content:space-between;">
+                <div class="team">{row['MANDANTE']}</div>
+                <div class="score">{row['GM']} x {row['GV']}</div>
+                <div class="team">{row['VISITANTE']}</div>
+            </div>
+            <div style="text-align:center; font-size:12px; color:gray;">
+                {row['DATA']}
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
 
 # ========================
 # ARTILHEIROS
@@ -127,13 +138,9 @@ elif pagina == "🥇 Artilheiros":
     df["JOGOS"] = pd.to_numeric(df["JOGOS"], errors="coerce").fillna(0).astype(int)
 
     df = df.rename(columns={"Z": "Jogador"})
-
     df = df.sort_values(by="GOLS", ascending=False)
 
     df.insert(0, "Pos", [f"{i}º" for i in range(1, len(df)+1)])
-
-    remover = ["COD", "COLUNA1", "HORA DE NASCIMENTO"]
-    df = df.drop(columns=[c for c in remover if c in df.columns], errors="ignore")
 
     df = df[["Pos", "Jogador", "CLUBE", "GOLS", "JOGOS"]]
 
@@ -150,31 +157,8 @@ elif pagina == "📈 Classificação":
     df["MG"] = df["MG"].round(2)
 
     df = df.sort_values(by="PTS", ascending=False)
+    df.insert(0, "Pos", [f"{i}º" for i in range(1, len(df)+1)])
 
-    df.insert(0, "Classificação", [f"{i}º" for i in range(1, len(df)+1)])
+    df = df[["Pos", "EQUIPE", "PTS", "J", "V", "E", "D", "APROV", "GL", "MG"]]
 
-    colunas = [
-        "Classificação", "EQUIPE", "PTS", "J", "V", "E", "D",
-        "APROV", "GL", "MG", "MD", "CL SH"
-    ]
-
-    if "GOLS" in df.columns:
-        colunas.insert(4, "GOLS")
-    if "CIDADE" in df.columns:
-        colunas.insert(2, "CIDADE")
-    if "UF" in df.columns:
-        colunas.insert(3, "UF")
-
-    df = df[colunas]
-
-    def zebra(x):
-        return ['background-color: #f2f2f2' if x.name % 2 == 0 else '' for _ in x]
-
-    st.dataframe(df.style.apply(zebra, axis=1), use_container_width=True)
-
-    st.markdown("""
-    V - Vitórias | E - Empates | D - Derrotas  
-    Aprov - Aproveitamento (%)  
-    GL - Gols Levados | MG - Média de gols  
-    MD - Média sofridos | CL SH - Clean Sheets
-    """)
+    st.dataframe(df, use_container_width=True)
