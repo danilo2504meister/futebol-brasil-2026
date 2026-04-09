@@ -87,27 +87,30 @@ elif pagina == "📊 Resultados":
     st.subheader("Resultados")
 
     df = cal.copy()
-    df["DATA"] = pd.to_datetime(df["DATA"]).dt.date
 
+    # corrigir data
+    df["DATA"] = pd.to_datetime(df["DATA"], errors="coerce").dt.date
+
+    # corrigir gols (ESSENCIAL)
+    df["GM"] = pd.to_numeric(df["GM"], errors="coerce").fillna(0).astype(int)
+    df["GV"] = pd.to_numeric(df["GV"], errors="coerce").fillna(0).astype(int)
+
+    # filtro por time
     time = st.selectbox(
         "Filtrar por time",
-        ["Todos"] + sorted(df["TIME"].unique())
+        ["Todos"] + sorted(df["TIME"].dropna().unique())
     )
 
     if time != "Todos":
         df = df[df["TIME"] == time]
 
-    df["PLACAR"] = (
-        df["TIME"] + " " +
-        df["GM"].astype(int).astype(str) +
-        " x " +
-        df["GV"].astype(int).astype(str)
-    )
+    # criar placar
+    df["PLACAR"] = df["TIME"] + " " + df["GM"].astype(str) + " x " + df["GV"].astype(str)
 
     df = df[["DATA", "PLACAR"]]
 
     st.dataframe(df, use_container_width=True)
-
+    
 # ========================
 # 🥇 ARTILHEIROS
 # ========================
