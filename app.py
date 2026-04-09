@@ -1,27 +1,60 @@
 import streamlit as st
 import pandas as pd
 
-st.set_page_config(
-    page_title="Futebol Brasil 2026",
-    page_icon="⚽",
-    layout="wide"
-)
+st.set_page_config(page_title="Futebol Brasil 2026", layout="wide")
+
+# ========================
+# ESTILO FLASHSCORE
+# ========================
+st.markdown("""
+<style>
+body {
+    background-color: #0b0e11;
+}
+h1, h2, h3 {
+    color: #00ffcc;
+}
+[data-testid="stMetric"] {
+    background-color: #111;
+    padding: 15px;
+    border-radius: 10px;
+}
+</style>
+""", unsafe_allow_html=True)
+
+# ========================
+# FUNÇÕES
+# ========================
+def limpar(df):
+    df.columns = df.columns.str.strip().str.upper()
+    return df
+
+def formatar_time(nome):
+    if isinstance(nome, str) and "-" in nome:
+        partes = nome.split("-")
+        return f"{partes[0].title()} ({partes[1]})"
+    return nome
 
 # ========================
 # CARREGAR DADOS
 # ========================
 @st.cache_data
 def carregar():
-    arquivo = "br26.xlsx"
-    cal = pd.read_excel(arquivo, sheet_name="CAL")
-    art = pd.read_excel(arquivo, sheet_name="ART")
-    cla = pd.read_excel(arquivo, sheet_name="CLA")
-    return cal, art, cla
+    cal = pd.read_excel("br26.xlsx", sheet_name="CAL")
+    art = pd.read_excel("br26.xlsx", sheet_name="ART")
+    cla = pd.read_excel("br26.xlsx", sheet_name="CLA")
+
+    return limpar(cal), limpar(art), limpar(cla)
 
 cal, art, cla = carregar()
 
+# FORMATAR TIMES
+cal["MANDANTE"] = cal["MANDANTE"].apply(formatar_time)
+cla["EQUIPE"] = cla["EQUIPE"].apply(formatar_time)
+art["CLUBE"] = art["CLUBE"].apply(formatar_time)
+
 # ========================
-# TÍTULO
+# MENU
 # ========================
 st.title("⚽ Futebol Brasil 2026")
 
@@ -37,59 +70,55 @@ if pagina == "🏠 Home":
 
     total_gols = int(cal["GM"].sum() + cal["GV"].sum())
 
-    # Time com mais gols
-    gols_time = cal.groupby("Mandante")["GM"].sum()
-    top_gols_time = gols_time.idxmax()
-    top_gols_valor = int(gols_time.max())
+    art["GOLS"] = art["GOLS"].fillna(0).astype(int)
+    top3 = art.sort_values(by="GOLS", ascending=False).head(3)
 
-    # Classificação
-    cla2 = cla.copy()
+    cla["APROV"] = (cla["PTS"] / (cla["J"] * 3)) * 100
+    lider = cla.sort_values(by="PTS", ascending=False).iloc[0]
 
-    # Melhor time (pontos)
-    top_time = cla2.sort_values(by="PTS", ascending=False).iloc[0]["EQUIPE"]
-
-    # Mais vitórias
-    top_vitorias = cla2.sort_values(by="V", ascending=False).iloc[0]["EQUIPE"]
-
-    # Melhor aproveitamento
-    cla2["APROV"] = (cla2["PTS"] / (cla2["J"] * 3)) * 100
-    top_aprov = cla2.sort_values(by="APROV", ascending=False).iloc[0]["EQUIPE"]
-
-    # Artilheiro
-    art2 = art.copy()
-    art2["GOLS"] = art2["GOLS"].astype(int)
-    artilheiro = art2.sort_values(by="GOLS", ascending=False).iloc[0]
-
-    col1, col2, col3 = st.columns(3)
-    col4, col5 = st.columns(2)
+    col1, col2 = st.columns(2)
 
     col1.metric("⚽ Total de Gols", total_gols)
-    col2.metric("🥇 Artilheiro", f"{artilheiro['z']} ({artilheiro['GOLS']})")
-    col3.metric("🔥 Time + Gols", f"{top_gols_time} ({top_gols_valor})")
-
-    col4.metric("🏆 Líder", top_time)
-    col5.metric("📊 Melhor Aproveitamento", top_aprov)
+    col2.metric("🏆 Líder", lider["EQUIPE"])
 
     st.divider()
+
+    st.subheader("🥇 Top 3 Artilheiros")
+
+    for i, row in top3.iterrows():
+        st.markdown(f"""
+        **{row['Z']}** - {row['CLUBE']}  
+        ⚽ {row['GOLS']} gols
+        """)
+        st.divider()
 
 # ========================
 # 📊 RESULTADOS
 # ========================
 elif pagina == "📊 Resultados":
 
-    st.subheader("📊 Resultados")
+    st.subheader("Resultados")
 
     df = cal.copy()
-    df["Data"] = pd.to_datetime(df["Data"]).dt.date
 
-    df["Placar"] = (
-        df["Mandante"] + " " +
-        df["GM"].astype(int).astype(str) +
-        " x " +
-        df["GV"].astype(int).astype(str)
+    df["DATA"] = pd.to_datetime(df["DATA"]).dt.date
+
+    time = st.selectbox(
+        "Filtrar por time",
+        ["Todos"] + sorted(df["MANDANTE"].unique())
     )
 
-    df = df[["Data", "Placar"]]
+    if time != "Todos":
+        df = df[df["MANDANTE"] == time]
+
+    df["PLACAR"] = (
+        df["MANDANTE"] + " " +
+        df["GM"].fillna(0).astype(int).astype(str) +
+        " x " +
+        df["GV"].fillna(0).astype(int).astype(str)
+    )
+
+    df = df[["DATA", "PLACAR"]]
 
     st.dataframe(df, use_container_width=True)
 
@@ -98,25 +127,29 @@ elif pagina == "📊 Resultados":
 # ========================
 elif pagina == "🥇 Artilheiros":
 
-    st.subheader("🥇 Artilheiros")
+    st.subheader("Artilheiros")
 
     df = art.copy()
 
-    df["GOLS"] = df["GOLS"].astype(int)
-    df["JOGOS"] = df["JOGOS"].astype(int)
+    df["GOLS"] = df["GOLS"].fillna(0).astype(int)
+    df["JOGOS"] = df["JOGOS"].fillna(0).astype(int)
 
     df = df.rename(columns={
-        "z": "Jogador",
+        "Z": "Jogador",
         "CLUBE": "Clube"
     })
 
     df = df.sort_values(by="GOLS", ascending=False)
 
-    # Ranking
-    df.insert(0, "Pos", [f"{i}º" for i in range(1, len(df)+1)])
+    df["Pos"] = [f"{i}º" for i in range(1, len(df)+1)]
 
-    df = df[["Pos", "Jogador", "Clube", "GOLS", "JOGOS"]]
+    # destaque top 3
+    top3 = df.head(3)
 
+    st.subheader("🔥 Destaque")
+    st.dataframe(top3, use_container_width=True)
+
+    st.subheader("📋 Ranking Completo")
     st.dataframe(df, use_container_width=True)
 
 # ========================
@@ -124,30 +157,30 @@ elif pagina == "🥇 Artilheiros":
 # ========================
 elif pagina == "📈 Classificação":
 
-    st.subheader("📈 Classificação")
+    st.subheader("Classificação")
 
     df = cla.copy()
 
-    df = df.rename(columns={
-        "EQUIPE": "Time"
-    })
+    df["APROV (%)"] = ((df["PTS"] / (df["J"] * 3)) * 100).round(1)
 
-    # Aproveitamento %
-    df["Aprov (%)"] = ((df["PTS"] / (df["J"] * 3)) * 100).round(1)
-
-    # Ranking
     df = df.sort_values(by="PTS", ascending=False)
-    df.insert(0, "Pos", [f"{i}º" for i in range(1, len(df)+1)])
 
-    # Seleção de colunas (ajustada)
-    colunas = [
-        "Pos", "Time", "PTS", "J", "V", "E", "D",
-        "Aprov (%)", "GL", "MG", "MD", "CL SH"
-    ]
+    # coluna fixa posição
+    df["Classificação"] = [f"{i}º" for i in range(1, len(df)+1)]
 
-    df = df[colunas]
+    df = df[[
+        "Classificação", "EQUIPE", "PTS", "J", "V", "E", "D",
+        "APROV (%)", "GL", "MG", "MD", "CL SH"
+    ]]
 
-    st.dataframe(df, use_container_width=True)
+    # destacar líder
+    st.dataframe(
+        df.style.apply(
+            lambda x: ['background-color: #1f7a1f' if x.name == 0 else '' for _ in x],
+            axis=1
+        ),
+        use_container_width=True
+    )
 
     st.markdown("""
     **Legenda:**
@@ -155,9 +188,9 @@ elif pagina == "📈 Classificação":
     V - Vitórias  
     E - Empates  
     D - Derrotas  
-    Aprov - Aproveitamento de Pontos (%)  
+    Aprov - Aproveitamento (%)  
     GL - Gols Levados  
-    MG - Média de Gols por jogo  
-    MD - Média de Gols sofridos por jogo  
-    CL SH - Clean Sheets (jogos sem sofrer gols)
+    MG - Média de gols  
+    MD - Média sofridos  
+    CL SH - Clean Sheets
     """)
