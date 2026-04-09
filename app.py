@@ -4,30 +4,16 @@ import pandas as pd
 st.set_page_config(page_title="Futebol Brasil 2026", layout="wide")
 
 # ========================
-# ESTILO MODERNO
+# ESTILO DARK PROFISSIONAL
 # ========================
 st.markdown("""
 <style>
 body {
-    background-color: #f4f6f9;
+    background-color: #0e1117;
+    color: white;
 }
 .block-container {
     padding-top: 2rem;
-}
-.card {
-    background: white;
-    padding: 15px;
-    border-radius: 12px;
-    margin-bottom: 12px;
-    box-shadow: 0px 2px 8px rgba(0,0,0,0.08);
-}
-.score {
-    font-size: 22px;
-    font-weight: bold;
-    text-align: center;
-}
-.team {
-    font-weight: 600;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -46,7 +32,7 @@ def formatar(nome):
     return nome
 
 # ========================
-# DADOS
+# CARREGAR DADOS
 # ========================
 @st.cache_data(ttl=60)
 def carregar():
@@ -57,9 +43,15 @@ def carregar():
 
 cal, art, cla = carregar()
 
+# formatar nomes
 cal["MANDANTE"] = cal["MANDANTE"].apply(formatar)
 cal["VISITANTE"] = cal["VISITANTE"].apply(formatar)
+cla["EQUIPE"] = cla["EQUIPE"].apply(formatar)
+art["CLUBE"] = art["CLUBE"].apply(formatar)
 
+# ========================
+# MENU
+# ========================
 st.title("⚽ Futebol Brasil 2026")
 
 pagina = st.sidebar.radio(
@@ -68,7 +60,7 @@ pagina = st.sidebar.radio(
 )
 
 # ========================
-# HOME
+# 🏠 HOME
 # ========================
 if pagina == "🏠 Home":
 
@@ -77,16 +69,36 @@ if pagina == "🏠 Home":
     media = round(total_gols / total_jogos, 2)
 
     col1, col2, col3 = st.columns(3)
-    col1.metric("Gols", total_gols)
-    col2.metric("Jogos", total_jogos)
-    col3.metric("Média", media)
+    col1.metric("⚽ Gols", total_gols)
+    col2.metric("📊 Jogos", total_jogos)
+    col3.metric("📈 Média", media)
 
-    st.markdown('<div class="card">Espaço para publicidade</div>', unsafe_allow_html=True)
+    st.divider()
+
+    # destaques
+    time_jogos = cla.sort_values(by="J", ascending=False).iloc[0]["EQUIPE"]
+    time_vitorias = cla.sort_values(by="V", ascending=False).iloc[0]["EQUIPE"]
+
+    gols_time = cal.groupby("MANDANTE")["GM"].sum()
+    time_gols = gols_time.idxmax()
+
+    art["GOLS"] = pd.to_numeric(art["GOLS"], errors="coerce").fillna(0).astype(int)
+    artilheiro = art.sort_values(by="GOLS", ascending=False).iloc[0]
+
+    col4, col5 = st.columns(2)
+    col6, col7 = st.columns(2)
+
+    col4.metric("Mais Jogos", time_jogos)
+    col5.metric("Mais Vitórias", time_vitorias)
+    col6.metric("Mais Gols", time_gols)
+    col7.metric("Artilheiro", f"{artilheiro['Z']} ({artilheiro['GOLS']})")
 
 # ========================
-# JOGOS (ESTILO APP)
+# 📊 JOGOS
 # ========================
 elif pagina == "📊 Jogos":
+
+    st.subheader("Resultados")
 
     df = cal.copy()
 
@@ -97,11 +109,11 @@ elif pagina == "📊 Jogos":
     col1, col2 = st.columns(2)
 
     with col1:
-        data = st.date_input("Data")
+        data = st.date_input("Filtrar por data")
 
     with col2:
         time = st.selectbox(
-            "Time",
+            "Buscar time",
             ["Todos"] + sorted(df["MANDANTE"].dropna().unique())
         )
 
@@ -114,21 +126,18 @@ elif pagina == "📊 Jogos":
     df = df.sort_values(by="DATA", ascending=False)
 
     for _, row in df.iterrows():
-        st.markdown(f"""
-        <div class="card">
-            <div style="display:flex; justify-content:space-between;">
-                <div class="team">{row['MANDANTE']}</div>
-                <div class="score">{row['GM']} x {row['GV']}</div>
-                <div class="team">{row['VISITANTE']}</div>
-            </div>
-            <div style="text-align:center; font-size:12px; color:gray;">
-                {row['DATA']}
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+
+        col1, col2, col3 = st.columns([3,1,3])
+
+        col1.markdown(f"**{row['MANDANTE']}**")
+        col2.markdown(f"### {row['GM']} x {row['GV']}")
+        col3.markdown(f"**{row['VISITANTE']}**")
+
+        st.caption(f"{row['DATA']} | {row.get('CAMPEONATO','')}")
+        st.divider()
 
 # ========================
-# ARTILHEIROS
+# 🥇 ARTILHEIROS
 # ========================
 elif pagina == "🥇 Artilheiros":
 
@@ -142,12 +151,15 @@ elif pagina == "🥇 Artilheiros":
 
     df.insert(0, "Pos", [f"{i}º" for i in range(1, len(df)+1)])
 
+    remover = ["COD", "COLUNA1", "HORA DE NASCIMENTO"]
+    df = df.drop(columns=[c for c in remover if c in df.columns], errors="ignore")
+
     df = df[["Pos", "Jogador", "CLUBE", "GOLS", "JOGOS"]]
 
     st.dataframe(df, use_container_width=True)
 
 # ========================
-# CLASSIFICAÇÃO
+# 📈 CLASSIFICAÇÃO
 # ========================
 elif pagina == "📈 Classificação":
 
@@ -161,4 +173,17 @@ elif pagina == "📈 Classificação":
 
     df = df[["Pos", "EQUIPE", "PTS", "J", "V", "E", "D", "APROV", "GL", "MG"]]
 
-    st.dataframe(df, use_container_width=True)
+    # zebra
+    def zebra(row):
+        return ['background-color: #1a1a1a' if row.name % 2 == 0 else '' for _ in row]
+
+    st.dataframe(
+        df.style.apply(zebra, axis=1),
+        use_container_width=True
+    )
+
+    st.markdown("""
+    V - Vitórias | E - Empates | D - Derrotas  
+    Aprov - Aproveitamento (%)  
+    GL - Gols Levados | MG - Média de gols  
+    """)
