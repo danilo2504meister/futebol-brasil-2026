@@ -26,9 +26,16 @@ def limpar(df):
     return df
 
 def formatar(nome):
-    if isinstance(nome, str) and "-" in nome:
-        nome, uf = nome.split("-")
-        return f"{nome.title()} ({uf})"
+    if not isinstance(nome, str):
+        return nome
+
+    if "-" in nome:
+        partes = nome.split("-")
+        
+        if len(partes) == 2:
+            nome, uf = partes
+            return f"{nome.title()} ({uf})"
+    
     return nome
 
 # ========================
