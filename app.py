@@ -129,7 +129,7 @@ elif pagina == "🥇 Artilheiros":
     df["POS"] = [f"{i}º" for i in range(1, len(df)+1)]
     df = df[["POS"] + [col for col in df.columns if col != "POS"]]
 
-    df = df[["POS", "Jogador", "CLUBE", "GOLS", "JOGOS"]]
+    df = df[["POS", "Jogador", "CLUBE", "GOLS"]]
 
     st.dataframe(df, use_container_width=True)
 
