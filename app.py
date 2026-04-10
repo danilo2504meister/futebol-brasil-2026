@@ -74,10 +74,10 @@ pagina = st.sidebar.radio(
 if pagina == "🏠 Home":
 
     total_gols = art["GOLS"].sum()
-   total_jogos = int(cla["J"].max())
+    total_jogos = int(cla["J"].max())
 
-time_gols = cla.sort_values(by="GOL", ascending=False).iloc[0]["TIME"]
-time_vitorias = cla.sort_values(by="V", ascending=False).iloc[0]["TIME"]
+    time_gols = cla.sort_values(by="GOL", ascending=False).iloc[0]["TIME"]
+    time_vitorias = cla.sort_values(by="V", ascending=False).iloc[0]["TIME"]
 
     artilheiro = art.sort_values(by="GOLS", ascending=False).iloc[0]
 
