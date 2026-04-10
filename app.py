@@ -74,10 +74,10 @@ pagina = st.sidebar.radio(
 if pagina == "🏠 Home":
 
     total_gols = art["GOLS"].sum()
-    total_jogos = cla["J"].sum()
+   total_jogos = int(cla["J"].max())
 
-    time_gols = cla.sort_values(by="GP", ascending=False).iloc[0]["TIME"]
-    time_vitorias = cla.sort_values(by="V", ascending=False).iloc[0]["TIME"]
+time_gols = cla.sort_values(by="GOL", ascending=False).iloc[0]["TIME"]
+time_vitorias = cla.sort_values(by="V", ascending=False).iloc[0]["TIME"]
 
     artilheiro = art.sort_values(by="GOLS", ascending=False).iloc[0]
 
@@ -99,14 +99,12 @@ elif pagina == "📈 Classificação":
 
     df = cla.copy()
 
-    df["APROVEITAMENTO"] = ((df["PT"] / (df["J"] * 3)) * 100).round(1)
-
-    df = df.sort_values(by="PT", ascending=False)
+    df = df.sort_values(by="PTS", ascending=False)
     df.insert(0, "POS", [f"{i}º" for i in range(1, len(df)+1)])
 
     df = df[[
-        "POS","TIME","PT","J","V","E","D",
-        "APROVEITAMENTO","GP","GL","SAL","MG","MD","CL"
+        "POS","TIME","PTS","J","V","E","D",
+        "APROVEITAMENTO","GOL","GL","SALDO","MG","MD","CL_SH"
     ]]
 
     st.dataframe(df, use_container_width=True)
