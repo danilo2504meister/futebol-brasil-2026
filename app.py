@@ -126,7 +126,8 @@ elif pagina == "🥇 Artilheiros":
     df = df.rename(columns={"JOGADOR": "Jogador"})
     df = df.sort_values(by="GOLS", ascending=False)
 
-    df.insert(0, "POS", [f"{i}º" for i in range(1, len(df)+1)])
+    df["POS"] = [f"{i}º" for i in range(1, len(df)+1)]
+df = df[["POS"] + [col for col in df.columns if col != "POS"]]
 
     df = df[["POS", "Jogador", "CLUBE", "GOLS", "JOGOS"]]
 
