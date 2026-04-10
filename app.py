@@ -114,7 +114,7 @@ elif pagina == "📈 Classificação":
         "APROVEITAMENTO","GOL","GL","SALDO","MG","MD","CL_SH"
     ]]
 
-    st.dataframe(df, use_container_width=True)
+    st.dataframe(df, use_container_width=True, hide_index=True)
 
 # ========================
 # 🥇 ARTILHEIROS
@@ -131,7 +131,7 @@ elif pagina == "🥇 Artilheiros":
 
     df = df[["POS", "Jogador", "CLUBE", "GOLS"]]
 
-    st.dataframe(df, use_container_width=True)
+    st.dataframe(df, use_container_width=True, hide_index=True)
 
 # ========================
 # 🌍 GOLS ESTRANGEIROS
@@ -141,4 +141,4 @@ elif pagina == "🌍 Gols Estrangeiros":
     df = est.copy()
     df = df.sort_values(by="GOLS", ascending=False)
 
-    st.dataframe(df, use_container_width=True)
+    st.dataframe(df, use_container_width=True, hide_index=True)
