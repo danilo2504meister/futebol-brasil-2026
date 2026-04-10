@@ -1,5 +1,12 @@
 import streamlit as st
 import pandas as pd
+import pandas as pd
+
+url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS8FNFEix6fpe4BjPHxJochxu1WfhugBQJ-1jMg_Y0N5CE5XaCHqqzKe2TMrEFwIA/pubhtml"
+
+df = pd.read_csv(url)
+
+print(df.head())
 
 st.set_page_config(page_title="Futebol Brasil 2026", layout="wide")
 
