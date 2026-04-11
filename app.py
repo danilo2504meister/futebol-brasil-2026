@@ -116,6 +116,9 @@ pagina = st.sidebar.radio(
 # ========================
 # 🏠 HOME
 # ========================
+# ========================
+# 🏠 HOME
+# ========================
 if pagina == "🏠 Home":
 
     total_gols = int(art["GOLS"].sum())
@@ -135,13 +138,13 @@ if pagina == "🏠 Home":
 
     col4, col5 = st.columns(2)
 
-with col4:
-    st.image(escudo_time(top_gols["TIME"]), width=60)
-    st.metric("🔥 Mais gols", f"{top_gols['TIME']} - {int(top_gols['GOL'])}")
+    with col4:
+        st.image(escudo_time(top_gols["TIME"]), width=60)
+        st.metric("🔥 Mais gols", f"{top_gols['TIME']} - {int(top_gols['GOL'])}")
 
-with col5:
-    st.image(escudo_time(top_vit["TIME"]), width=60)
-    st.metric("🥇 Mais vitórias", f"{top_vit['TIME']} - {int(top_vit['V'])}")
+    with col5:
+        st.image(escudo_time(top_vit["TIME"]), width=60)
+        st.metric("🥇 Mais vitórias", f"{top_vit['TIME']} - {int(top_vit['V'])}")
 
 # ========================
 # 📈 CLASSIFICAÇÃO
