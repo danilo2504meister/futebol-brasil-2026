@@ -100,7 +100,7 @@ if pagina == "🏠 Home":
     col5.metric("🥇 Mais vitórias", time_vitorias)
 
 <p style="text-align: center; font-size: 13px; color: #888; margin-top: 15px;">
-  🔄 Atualizado em: 10/04/2026
+  Atualizado em: 10/04/2026
 </p>
 
 # ========================
