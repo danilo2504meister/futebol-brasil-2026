@@ -15,6 +15,10 @@ body {
 .block-container {
     padding-top: 2rem;
 }
+[data-testid="stDataFrame"] {
+    background-color: #0e1117;
+    color: white;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -31,7 +35,6 @@ def formatar(nome):
 
     if "-" in nome:
         partes = nome.split("-")
-        
         if len(partes) == 2:
             nome, uf = partes
             return f"{nome.title()} ({uf})"
@@ -53,20 +56,16 @@ art, cla, est = carregar()
 # ========================
 # TRATAMENTO
 # ========================
-
-# CLASSIFICAÇÃO
 cla["TIME"] = cla["TIME"].apply(formatar)
 
-# ARTILHEIROS
 art["CLUBE"] = art["CLUBE"].apply(formatar)
 art["GOLS"] = pd.to_numeric(art["GOLS"], errors="coerce").fillna(0).astype(int)
 art["JOGOS"] = pd.to_numeric(art["JOGOS"], errors="coerce").fillna(0).astype(int)
 
-# ESTRANGEIROS
 est["GOLS"] = pd.to_numeric(est["GOLS"], errors="coerce").fillna(0).astype(int)
 
 # ========================
-# MENU
+# HEADER
 # ========================
 st.title("⚽ Futebol Brasil 2026")
 
@@ -76,6 +75,7 @@ st.markdown(
     f"<p style='color: #aaa; font-size: 13px;'>🔄 Atualizado até: {data_atualizacao}</p>",
     unsafe_allow_html=True
 )
+
 pagina = st.sidebar.radio(
     "Menu",
     ["🏠 Home", "📈 Classificação", "🥇 Artilheiros", "🌍 Gols Estrangeiros"]
@@ -104,24 +104,26 @@ if pagina == "🏠 Home":
     col4, col5 = st.columns(2)
     col4.metric("🔥 Time com mais gols", time_gols)
     col5.metric("🥇 Mais vitórias", time_vitorias)
+
     st.subheader("🏆 Top 5 Times")
 
-top5 = cla.sort_values(by="PTS", ascending=False).head(5)
+    top5 = cla.sort_values(by="PTS", ascending=False).head(5)
 
-st.dataframe(
-    top5[["TIME", "PTS", "J", "V", "GOL"]],
-    use_container_width=True,
-    hide_index=True
-)
-st.subheader("🥇 Top 5 Artilheiros")
+    st.dataframe(
+        top5[["TIME", "PTS", "J", "V", "GOL"]],
+        use_container_width=True,
+        hide_index=True
+    )
 
-top_art = art.sort_values(by="GOLS", ascending=False).head(5)
+    st.subheader("🥇 Top 5 Artilheiros")
 
-st.dataframe(
-    top_art[["JOGADOR", "CLUBE", "GOLS"]],
-    use_container_width=True,
-    hide_index=True
-)
+    top_art = art.sort_values(by="GOLS", ascending=False).head(5)
+
+    st.dataframe(
+        top_art[["JOGADOR", "CLUBE", "GOLS"]],
+        use_container_width=True,
+        hide_index=True
+    )
 
 # ========================
 # 📈 CLASSIFICAÇÃO
@@ -153,16 +155,6 @@ elif pagina == "📈 Classificação":
         use_container_width=True,
         hide_index=True
     )
-
-# destaque simples
-st.markdown("""
-<style>
-[data-testid="stDataFrame"] {
-    background-color: #0e1117;
-    color: white;
-}
-</style>
-""", unsafe_allow_html=True)
 
 # ========================
 # 🥇 ARTILHEIROS
