@@ -10,6 +10,7 @@ st.markdown("""
 <style>
 body { background-color: #0e1117; color: white; }
 [data-testid="stDataFrame"] { background-color: #0e1117; color: white; }
+th, td { text-align: center !important; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -61,7 +62,6 @@ art["JOGOS"] = pd.to_numeric(art["JOGOS"], errors="coerce").fillna(0)
 # ========================
 st.title("⚽ Futebol Brasil 2026")
 data_atualizacao = "10/04/2026"
-
 st.markdown(f"🔄 Atualizado até: {data_atualizacao}")
 
 pagina = st.sidebar.radio(
@@ -70,7 +70,7 @@ pagina = st.sidebar.radio(
 )
 
 # ========================
-# HOME
+# 🏠 HOME
 # ========================
 if pagina == "🏠 Home":
 
@@ -85,16 +85,16 @@ if pagina == "🏠 Home":
     col1, col2, col3 = st.columns(3)
     col1.metric("⚽ Gols", total_gols)
     col2.metric("📊 Jogos", total_jogos)
-    col3.metric("🏆 Artilheiro", f"{artilheiro['JOGADOR']} ({int(artilheiro['GOLS'])})")
+    col3.metric("🏆 Artilheiro", f"{artilheiro['JOGADOR']} - {int(artilheiro['GOLS'])}")
 
     st.divider()
 
     col4, col5 = st.columns(2)
-    col4.metric("🔥 Mais gols", f"{top_gols['TIME']} ({int(top_gols['GOL'])})")
-    col5.metric("🥇 Mais vitórias", f"{top_vit['TIME']} ({int(top_vit['V'])})")
+    col4.metric("🔥 Mais gols", f"{top_gols['TIME']} - {int(top_gols['GOL'])}")
+    col5.metric("🥇 Mais vitórias", f"{top_vit['TIME']} - {int(top_vit['V'])}")
 
 # ========================
-# CLASSIFICAÇÃO
+# 📈 CLASSIFICAÇÃO
 # ========================
 elif pagina == "📈 Classificação":
 
@@ -102,30 +102,35 @@ elif pagina == "📈 Classificação":
 
     df = df.sort_values(by=["PTS","V","SALDO","GOL"], ascending=False)
 
+    # remover colunas
+    col_remover = ["UNNAMED: 0","INV","VIT","EMP","DIVISÃO NACIONAL","CIDADE","UF"]
+    df = df.drop(columns=[c for c in col_remover if c in df.columns])
+
+    # formatar casas decimais
     df["APROVEITAMENTO"] = df["APROVEITAMENTO"].astype(float).round(2)
     df["MG"] = df["MG"].astype(float).round(2)
     df["MD"] = df["MD"].astype(float).round(2)
 
-    df.insert(0, "POS", df.rank(method="min", ascending=False)["PTS"].astype(int).astype(str) + "º")
+    df.insert(0, "POS", range(1, len(df)+1))
 
     st.dataframe(df, use_container_width=True, hide_index=True)
 
 # ========================
-# ARTILHEIROS
+# 🥇 ARTILHEIROS
 # ========================
 elif pagina == "🥇 Artilheiros":
 
     df = art.copy()
     df = df.sort_values(by="GOLS", ascending=False)
 
-    df["POS"] = df["GOLS"].rank(method="min", ascending=False).astype(int).astype(str) + "º"
+    df["POS"] = df["GOLS"].rank(method="min", ascending=False).astype(int)
 
     df = df[["POS","JOGADOR","CLUBE","GOLS"]]
 
     st.dataframe(df, use_container_width=True, hide_index=True)
 
 # ========================
-# GOLS ESTRANGEIROS
+# 🌍 GOLS ESTRANGEIROS
 # ========================
 elif pagina == "🌍 Gols Estrangeiros":
 
@@ -139,13 +144,17 @@ elif pagina == "🌍 Gols Estrangeiros":
     st.dataframe(df, use_container_width=True, hide_index=True)
 
 # ========================
-# INVENCIBILIDADE
+# 📊 INVENCIBILIDADE
 # ========================
 elif pagina == "📊 Invencibilidade":
 
     df = cla.copy()
 
     df = df[["TIME","INV","VIT","EMP"]]
+
+    # remover vazios
+    df = df[df["INV"].notna()]
+
     df = df.sort_values(by="INV", ascending=False)
 
     st.dataframe(df, use_container_width=True, hide_index=True)
