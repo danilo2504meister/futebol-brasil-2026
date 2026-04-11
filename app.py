@@ -28,37 +28,28 @@ def formatar(nome):
             return f"{partes[0].title()} ({partes[1]})"
     return nome
 
+def escudo_time(nome):
+    nome = nome.split(" (")[0].lower()
+
+    mapa = {
+        "bahia": "bahia.png",
+        "palmeiras": "palmeiras.png"
+    }
+
+    arquivo = mapa.get(nome)
+
+    if arquivo:
+        return f"escudos/{arquivo}"
+    else:
+        return None
+
 def bandeira(pais):
     flags = {
         "BRA": "🇧🇷", "ARG": "🇦🇷", "URU": "🇺🇾",
-        "PAR": "🇵🇾", "COL": "🇨🇴", "CHI": "🇨🇱",
-        "PER": "🇵🇪", "VEN": "🇻🇪"
+        "PAR": "🇵🇾", "COL": "🇨🇴", "CHI": "🇨🇱"
     }
     return flags.get(pais, "")
 
-def limpar(df):
-    df.columns = df.columns.str.strip().str.upper()
-    return df
-
-def formatar(nome):
-    if isinstance(nome, str) and "-" in nome:
-        partes = nome.split("-")
-        if len(partes) == 2:
-            return f"{partes[0].title()} ({partes[1]})"
-    return nome
-
-def escudo_time(nome):
-    nome = nome.split(" (")[0].lower()
-    mapa = {
-        "bahia": "bahiaba.png",
-        "palmeiras": "palmeirassp.png",
-    }
-    arquivo = mapa.get(nome)
-    if arquivo:
-         return f"escudos/{arquivo}"
-    else:
-        return None  
-        
 # ========================
 # DADOS
 # ========================
@@ -114,31 +105,31 @@ if pagina == "🏠 Home":
 
     col4, col5 = st.columns(2)
 
-   with col4:
-    c1, c2 = st.columns([1, 4])
+    # MAIS GOLS
+    with col4:
+        c1, c2 = st.columns([1, 4])
 
-    with c1:
-        escudo = escudo_time(top_gols["TIME"])
-        if escudo:
-            st.image(escudo, width=50)
+        with c1:
+            escudo = escudo_time(top_gols["TIME"])
+            if escudo:
+                st.image(escudo, width=50)
 
-    with c2:
-        st.markdown(f"🔥 **Mais gols**")
-        st.markdown(f"### {top_gols['TIME']} - {int(top_gols['GOL'])}")
-   
-      with col5:
-    c1, c2 = st.columns([1, 4])
+        with c2:
+            st.markdown("🔥 **Mais gols**")
+            st.markdown(f"### {top_gols['TIME']} - {int(top_gols['GOL'])}")
 
-    with c1:
-        escudo = escudo_time(top_vit["TIME"])
-        if escudo:
-            st.image(escudo, width=50)
+    # MAIS VITÓRIAS
+    with col5:
+        c1, c2 = st.columns([1, 4])
 
-    with c2:
-        st.markdown(f"🥇 **Mais vitórias**")
-        st.markdown(f"### {top_vit['TIME']} - {int(top_vit['V'])}")
-        
-        st.metric("🥇 Mais vitórias", f"{top_vit['TIME']} - {int(top_vit['V'])}")
+        with c1:
+            escudo = escudo_time(top_vit["TIME"])
+            if escudo:
+                st.image(escudo, width=50)
+
+        with c2:
+            st.markdown("🥇 **Mais vitórias**")
+            st.markdown(f"### {top_vit['TIME']} - {int(top_vit['V'])}")
 
 # ========================
 # 📈 CLASSIFICAÇÃO
@@ -149,11 +140,9 @@ elif pagina == "📈 Classificação":
 
     df = df.sort_values(by=["PTS","V","SALDO","GOL"], ascending=False)
 
-    # remover colunas
-    col_remover = ["UNNAMED: 0","INV","EQUIPE","VIT","EMP","DIVISÃO NACIONAL","CIDADE","UF"]
+    col_remover = ["UNNAMED: 0","INV","VIT","EMP","DIVISÃO NACIONAL","CIDADE","UF"]
     df = df.drop(columns=[c for c in col_remover if c in df.columns])
 
-    # formatar casas decimais
     df["APROVEITAMENTO"] = df["APROVEITAMENTO"].astype(float).round(2)
     df["MG"] = df["MG"].astype(float).round(2)
     df["MD"] = df["MD"].astype(float).round(2)
@@ -198,8 +187,6 @@ elif pagina == "📊 Invencibilidade":
     df = cla.copy()
 
     df = df[["TIME","INV","VIT","EMP"]]
-
-    # remover vazios
     df = df[df["INV"].notna()]
 
     df = df.sort_values(by="INV", ascending=False)
