@@ -99,6 +99,10 @@ if pagina == "🏠 Home":
     col4.metric("🔥 Time com mais gols", time_gols)
     col5.metric("🥇 Mais vitórias", time_vitorias)
 
+<p style="text-align: center; font-size: 13px; color: #888; margin-top: 15px;">
+  🔄 Atualizado em: 10/04/2026
+</p>
+
 # ========================
 # 📈 CLASSIFICAÇÃO
 # ========================
