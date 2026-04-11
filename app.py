@@ -103,7 +103,7 @@ elif pagina == "📈 Classificação":
     df = df.sort_values(by=["PTS","V","SALDO","GOL"], ascending=False)
 
     # remover colunas
-    col_remover = ["UNNAMED: 0","INV","VIT","EMP","DIVISÃO NACIONAL","CIDADE","UF"]
+    col_remover = ["UNNAMED: 0","INV","EQUIPE","VIT","EMP","DIVISÃO NACIONAL","CIDADE","UF"]
     df = df.drop(columns=[c for c in col_remover if c in df.columns])
 
     # formatar casas decimais
