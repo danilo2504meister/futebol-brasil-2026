@@ -35,6 +35,50 @@ def bandeira(pais):
         "PER": "🇵🇪", "VEN": "🇻🇪"
     }
     return flags.get(pais, "")
+    # ========================
+# FUNÇÕES
+# ========================
+def limpar(df):
+    df.columns = df.columns.str.strip().str.upper()
+    return df
+
+def formatar(nome):
+    if isinstance(nome, str) and "-" in nome:
+        partes = nome.split("-")
+        if len(partes) == 2:
+            return f"{partes[0].title()} ({partes[1]})"
+    return nome
+
+# 👇 COLE AQUI
+def escudo_time(nome):
+    nome = nome.split(" (")[0].lower()
+    
+    mapa = {
+        "flamengo": "flamengo.png",
+        "palmeiras": "palmeiras.png",
+        "corinthians": "corinthians.png",
+        "são paulo": "sao-paulo.png",
+        "santos": "santos.png",
+        "grêmio": "gremio.png",
+        "internacional": "internacional.png",
+        "atlético mineiro": "atletico-mg.png",
+        "cruzeiro": "cruzeiro.png",
+        "bahia": "bahia.png",
+        "fortaleza": "fortaleza.png",
+        "ceará": "ceara.png",
+        "vasco": "vasco.png",
+        "botafogo": "botafogo.png",
+        "fluminense": "fluminense.png",
+        "goiás": "goias.png",
+        "coritiba": "coritiba.png",
+        "cuiabá": "cuiaba.png",
+        "bragantino": "bragantino.png",
+        "athletico paranaense": "athletico-pr.png"
+    }
+
+    arquivo = mapa.get(nome, "")
+
+    return f"https://raw.githubusercontent.com/luizribeiro/escudos-brasileirao/master/{arquivo}"
 
 # ========================
 # DADOS
@@ -90,8 +134,14 @@ if pagina == "🏠 Home":
     st.divider()
 
     col4, col5 = st.columns(2)
-    col4.metric("🔥 Mais gols", f"{top_gols['TIME']} - {int(top_gols['GOL'])}")
-    col5.metric("🥇 Mais vitórias", f"{top_vit['TIME']} - {int(top_vit['V'])}")
+
+with col4:
+    st.image(escudo_time(top_gols["TIME"]), width=60)
+    st.metric("🔥 Mais gols", f"{top_gols['TIME']} - {int(top_gols['GOL'])}")
+
+with col5:
+    st.image(escudo_time(top_vit["TIME"]), width=60)
+    st.metric("🥇 Mais vitórias", f"{top_vit['TIME']} - {int(top_vit['V'])}")
 
 # ========================
 # 📈 CLASSIFICAÇÃO
