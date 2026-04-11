@@ -104,6 +104,24 @@ if pagina == "🏠 Home":
     col4, col5 = st.columns(2)
     col4.metric("🔥 Time com mais gols", time_gols)
     col5.metric("🥇 Mais vitórias", time_vitorias)
+    st.subheader("🏆 Top 5 Times")
+
+top5 = cla.sort_values(by="PTS", ascending=False).head(5)
+
+st.dataframe(
+    top5[["TIME", "PTS", "J", "V", "GOL"]],
+    use_container_width=True,
+    hide_index=True
+)
+st.subheader("🥇 Top 5 Artilheiros")
+
+top_art = art.sort_values(by="GOLS", ascending=False).head(5)
+
+st.dataframe(
+    top_art[["JOGADOR", "CLUBE", "GOLS"]],
+    use_container_width=True,
+    hide_index=True
+)
 
 # ========================
 # 📈 CLASSIFICAÇÃO
@@ -120,7 +138,21 @@ elif pagina == "📈 Classificação":
         "APROVEITAMENTO","GOL","GL","SALDO","MG","MD","CL_SH"
     ]]
 
-    st.dataframe(df, use_container_width=True, hide_index=True)
+    st.dataframe(
+    df,
+    use_container_width=True,
+    hide_index=True
+)
+
+# destaque simples
+st.markdown("""
+<style>
+[data-testid="stDataFrame"] {
+    background-color: #0e1117;
+    color: white;
+}
+</style>
+""", unsafe_allow_html=True)
 
 # ========================
 # 🥇 ARTILHEIROS
