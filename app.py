@@ -114,18 +114,30 @@ if pagina == "🏠 Home":
 
     col4, col5 = st.columns(2)
 
-    with col4:
+   with col4:
+    c1, c2 = st.columns([1, 4])
+
+    with c1:
         escudo = escudo_time(top_gols["TIME"])
         if escudo:
-            st.image(escudo, width=60)
+            st.image(escudo, width=50)
 
-        st.metric("🔥 Mais gols", f"{top_gols['TIME']} - {int(top_gols['GOL'])}")
+    with c2:
+        st.markdown(f"🔥 **Mais gols**")
+        st.markdown(f"### {top_gols['TIME']} - {int(top_gols['GOL'])}")
+   
+      with col5:
+    c1, c2 = st.columns([1, 4])
 
-    with col5:
+    with c1:
         escudo = escudo_time(top_vit["TIME"])
         if escudo:
-            st.image(escudo, width=60)
+            st.image(escudo, width=50)
 
+    with c2:
+        st.markdown(f"🥇 **Mais vitórias**")
+        st.markdown(f"### {top_vit['TIME']} - {int(top_vit['V'])}")
+        
         st.metric("🥇 Mais vitórias", f"{top_vit['TIME']} - {int(top_vit['V'])}")
 
 # ========================
