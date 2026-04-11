@@ -142,7 +142,7 @@ elif pagina == "📈 Classificação":
 
     df = df.sort_values(by=["PTS","V","SALDO","GOL"], ascending=False)
 
-    col_remover = ["UNNAMED: 0","INV","VIT","EMP","DIVISÃO NACIONAL","CIDADE","UF"]
+    col_remover = ["UNNAMED: 0","EQUIPE","INV","VIT","EMP","DIVISÃO NACIONAL","CIDADE","UF"]
     df = df.drop(columns=[c for c in col_remover if c in df.columns])
 
     df["APROVEITAMENTO"] = df["APROVEITAMENTO"].astype(float).round(2)
