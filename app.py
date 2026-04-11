@@ -48,7 +48,13 @@ def bandeira(pais):
     flags = {
         "BRA": "🇧🇷", "ARG": "🇦🇷", "URU": "🇺🇾",
         "PAR": "🇵🇾", "COL": "🇨🇴", "CHI": "🇨🇱",
-        "PER": "🇵🇪", "VEN": "🇻🇪"
+        "PER": "🇵🇪", "VEN": "🇻🇪", "EQU": "🇪🇨",
+        "NIG": "🇳🇬", "GAN": "🇬🇭", "FRA": "🇫🇷",
+        "BEL": "🇧🇪", "TOG": "🇹🇬", "ANG": "🇦🇴",
+        "BOL": "🇧🇴", "ESP": "🇪🇸", "EUA": "🇺🇸",
+        "HAI": "🇭🇹", "MEX": "🇲🇽", "HOL": "🇳🇱",
+        "PER": "🇵🇪"
+        
     }
     return flags.get(pais, "")
 
