@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import os
 
 st.set_page_config(page_title="Futebol Brasil 2026", layout="wide")
 
@@ -28,25 +29,26 @@ def formatar(nome):
             return f"{partes[0].title()} ({partes[1]})"
     return nome
 
+# 🔥 FUNÇÃO DE ESCUDO (PADRÃO COM UF)
 def escudo_time(nome):
-    nome = nome.split(" (")[0].lower()
+    if not isinstance(nome, str):
+        return None
 
-    mapa = {
-        "bahia": "bahia.png",
-        "palmeiras": "palmeiras.png"
-    }
+    nome = nome.lower()
+    nome = nome.replace(" ", "").replace("(", "").replace(")", "")
 
-    arquivo = mapa.get(nome)
+    caminho = f"escudos/{nome}.png"
 
-    if arquivo:
-        return f"escudos/{arquivo}"
+    if os.path.exists(caminho):
+        return caminho
     else:
         return None
 
 def bandeira(pais):
     flags = {
         "BRA": "🇧🇷", "ARG": "🇦🇷", "URU": "🇺🇾",
-        "PAR": "🇵🇾", "COL": "🇨🇴", "CHI": "🇨🇱"
+        "PAR": "🇵🇾", "COL": "🇨🇴", "CHI": "🇨🇱",
+        "PER": "🇵🇪", "VEN": "🇻🇪"
     }
     return flags.get(pais, "")
 
