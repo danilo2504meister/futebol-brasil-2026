@@ -138,11 +138,21 @@ elif pagina == "📈 Classificação":
         "APROVEITAMENTO","GOL","GL","SALDO","MG","MD","CL_SH"
     ]]
 
+    def destacar_linhas(row):
+        pos = int(row["POS"].replace("º", ""))
+
+        if pos <= 4:
+            return ["background-color: #013220"] * len(row)
+        elif pos >= len(df) - 3:
+            return ["background-color: #3a0000"] * len(row)
+        else:
+            return [""] * len(row)
+
     st.dataframe(
-    df,
-    use_container_width=True,
-    hide_index=True
-)
+        df.style.apply(destacar_linhas, axis=1),
+        use_container_width=True,
+        hide_index=True
+    )
 
 # destaque simples
 st.markdown("""
