@@ -1,67 +1,37 @@
-from flask import Flask, request
+import streamlit as st
 
-app = Flask(__name__)
+# CONFIG
+st.set_page_config(page_title="Futebol Brasil", layout="centered")
 
-@app.route("/")
-def home():
-    pagina = request.args.get("pagina", "🏠 Início")
+# DATA (EDITAR TODO DIA)
+data_atualizacao = "10/04/2026"
 
-    data_atualizacao = "10/04/2026"  # <-- ALTERA SÓ ISSO TODO DIA
+# MENU
+pagina = st.sidebar.radio(
+    "Menu",
+    ["🏠 Início", "📈 Classificação"]
+)
 
-    if pagina == "🏠 Início":
-        return f"""
-        <html>
-        <head>
-            <title>Futebol Brasil 2026</title>
-        </head>
-        <body style="background-color: #111; color: white; font-family: Arial; text-align: center;">
+# PÁGINA INICIAL
+if pagina == "🏠 Início":
+    st.title("⚽ Futebol Brasil")
 
-            <h1>⚽ Futebol Brasil</h1>
+    st.markdown(f"""
+    <p style='color: gray;'>🔄 Atualizado em: {data_atualizacao}</p>
+    """, unsafe_allow_html=True)
 
-            <p style="color: #aaa;">🔄 Atualizado em: {data_atualizacao}</p>
+    st.write("---")
 
-            <hr>
+    st.write("Bem-vindo ao seu site de resultados 👊")
 
-            <h2>Páginas</h2>
+# CLASSIFICAÇÃO
+elif pagina == "📈 Classificação":
+    st.title("📈 Classificação")
 
-            <a href="/?pagina=🏠 Início" style="color: white;">🏠 Início</a> |
-            <a href="/?pagina=📈 Classificação" style="color: white;">📈 Classificação</a>
+    st.markdown(f"""
+    <p style='color: gray;'>🔄 Atualizado em: {data_atualizacao}</p>
+    """, unsafe_allow_html=True)
 
-            <hr>
+    st.write("---")
 
-            <p>Bem-vindo ao seu site de resultados 👊</p>
-
-        </body>
-        </html>
-        """
-
-    elif pagina == "📈 Classificação":
-        return f"""
-        <html>
-        <head>
-            <title>Classificação</title>
-        </head>
-        <body style="background-color: #111; color: white; font-family: Arial; text-align: center;">
-
-            <h1>📈 Classificação</h1>
-
-            <p style="color: #aaa;">🔄 Atualizado em: {data_atualizacao}</p>
-
-            <hr>
-
-            <a href="/?pagina=🏠 Início" style="color: white;">⬅️ Voltar</a>
-
-            <hr>
-
-            <p>Aqui vai sua tabela depois...</p>
-
-        </body>
-        </html>
-        """
-
-    else:
-        return "Página não encontrada"
-
-
-if __name__ == "__main__":
-    app.run(debug=True)
+    st.write("Aqui vai sua tabela depois...")
