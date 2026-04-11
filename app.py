@@ -52,10 +52,11 @@ def formatar(nome):
 # 👇 COLE AQUI
 def escudo_time(nome):
     nome = nome.split(" (")[0].lower()
-    
+
     mapa = {
-        "flamengo": "flamengo.png",
+        "bahia": "bahia.png",
         "palmeiras": "palmeiras.png",
+        "flamengo": "flamengo.png",
         "corinthians": "corinthians.png",
         "são paulo": "sao-paulo.png",
         "santos": "santos.png",
@@ -63,23 +64,18 @@ def escudo_time(nome):
         "internacional": "internacional.png",
         "atlético mineiro": "atletico-mg.png",
         "cruzeiro": "cruzeiro.png",
-        "bahia": "bahia.png",
         "fortaleza": "fortaleza.png",
-        "ceará": "ceara.png",
         "vasco": "vasco.png",
         "botafogo": "botafogo.png",
-        "fluminense": "fluminense.png",
-        "goiás": "goias.png",
-        "coritiba": "coritiba.png",
-        "cuiabá": "cuiaba.png",
-        "bragantino": "bragantino.png",
-        "athletico paranaense": "athletico-pr.png"
+        "fluminense": "fluminense.png"
     }
 
-    arquivo = mapa.get(nome, "")
+    arquivo = mapa.get(nome)
 
-    return f"https://raw.githubusercontent.com/luizribeiro/escudos-brasileirao/master/{arquivo}"
-
+    if arquivo:
+        return f"https://raw.githubusercontent.com/luizribeiro/escudos-brasileirao/master/{arquivo}"
+    else:
+        return None  # 👈 evita quebrar
 # ========================
 # DADOS
 # ========================
