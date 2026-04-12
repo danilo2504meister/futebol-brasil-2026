@@ -165,7 +165,7 @@ elif pagina == "📈 Classificação":
 elif pagina == "🥇 Artilheiros":
 
     df = art.copy()
-   df = df.sort_values(by=["GOLS", "JOGADOR"], ascending=[False, True])
+    df = df.sort_values(by=["GOLS", "JOGADOR"], ascending=[False, True])
 
     df["POS"] = df["GOLS"].rank(method="min", ascending=False).astype(int)
 
