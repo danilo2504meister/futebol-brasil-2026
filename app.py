@@ -182,27 +182,51 @@ elif pagina == "🥇 Artilheiros":
 # ========================
 elif pagina == "🌍 Gols Estrangeiros":
 
+    # ========================
+    # 🥇 ARTILHEIROS ESTRANGEIROS
+    # ========================
+    st.subheader("🥇 Artilheiros Estrangeiros")
+
     df = art.copy()
 
     # remove brasileiros e vazios
     df = df[df["PAIS"].notna()]
     df = df[df["PAIS"] != ""]
-    df = df[df["PAIS"] != "brasil"]
+    df = df[df["PAIS"] != "BRA"]
 
-    # adiciona bandeira
+    # bandeira
     df["PAIS"] = df["PAIS"].apply(lambda x: f"{bandeira(x)} {x}")
 
     # ordena
     df = df.sort_values(by=["GOLS", "JOGADOR"], ascending=[False, True])
 
-    # ranking igual artilheiros
+    # ranking
     df["POS"] = df["GOLS"].rank(method="min", ascending=False).astype(int)
 
-    # seleciona colunas
     df = df[["POS", "JOGADOR", "CLUBE", "GOLS", "PAIS"]]
 
     st.dataframe(df, use_container_width=True, hide_index=True)
 
+    st.divider()
+
+    # ========================
+    # 🌍 GOLS POR PAÍS
+    # ========================
+    st.subheader("🌍 Gols por País")
+
+    df2 = est.copy()
+
+    # remove vazios
+    df2 = df2[df2["PAIS"].notna()]
+    df2 = df2[df2["PAIS"] != ""]
+
+    # bandeira
+    df2["PAIS"] = df2["PAIS"].apply(lambda x: f"{bandeira(x)} {x}")
+
+    # ordena
+    df2 = df2.sort_values(by="GOLS", ascending=False)
+
+    st.dataframe(df2, use_container_width=True, hide_index=True)
 # ========================
 # 📊 INVENCIBILIDADE
 # ========================
