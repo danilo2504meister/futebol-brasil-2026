@@ -187,7 +187,7 @@ elif pagina == "🌍 Gols Estrangeiros":
     # remove brasileiros e vazios
     df = df[df["PAIS"].notna()]
     df = df[df["PAIS"] != ""]
-    df = df[df["PAIS"] != "BRA"]
+    df = df[df["PAIS"] != "brasil"]
 
     # adiciona bandeira
     df["PAIS"] = df["PAIS"].apply(lambda x: f"{bandeira(x)} {x}")
