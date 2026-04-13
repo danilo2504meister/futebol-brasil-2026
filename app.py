@@ -83,7 +83,7 @@ art["JOGOS"] = pd.to_numeric(art["JOGOS"], errors="coerce").fillna(0)
 # HEADER
 # ========================
 st.title("⚽ Futebol Brasil 2026")
-data_atualizacao = "11/04/2026"
+data_atualizacao = "12/04/2026"
 st.markdown(f"🔄 Atualizado até: {data_atualizacao}")
 
 pagina = st.sidebar.radio(
