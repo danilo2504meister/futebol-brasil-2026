@@ -29,7 +29,6 @@ def formatar(nome):
             return f"{partes[0].title()} ({partes[1]})"
     return nome
 
-# 🔥 FUNÇÃO DE ESCUDO (PADRÃO COM UF)
 def escudo_time(nome):
     if not isinstance(nome, str):
         return None
@@ -52,9 +51,7 @@ def bandeira(pais):
         "NIG": "🇳🇬", "GAN": "🇬🇭", "FRA": "🇫🇷",
         "BEL": "🇧🇪", "TOG": "🇹🇬", "ANG": "🇦🇴",
         "BOL": "🇧🇴", "ESP": "🇪🇸", "EUA": "🇺🇸",
-        "HAI": "🇭🇹", "MEX": "🇲🇽", "HOL": "🇳🇱",
-        "PER": "🇵🇪"
-        
+        "HAI": "🇭🇹", "MEX": "🇲🇽", "HOL": "🇳🇱"
     }
     return flags.get(pais, "")
 
@@ -66,15 +63,23 @@ def carregar():
     art = pd.read_excel("br26.xlsx", sheet_name="ART")
     cla = pd.read_excel("br26.xlsx", sheet_name="CLA")
     est = pd.read_excel("br26.xlsx", sheet_name="EST")
-    return limpar(art), limpar(cla), limpar(est)
+    cal = pd.read_excel("br26.xlsx", sheet_name="CAL")
+    return limpar(art), limpar(cla), limpar(est), limpar(cal)
 
-art, cla, est = carregar()
+art, cla, est, cal = carregar()
 
 # ========================
 # TRATAMENTO
 # ========================
 cla["TIME"] = cla["TIME"].apply(formatar)
 art["CLUBE"] = art["CLUBE"].apply(formatar)
+
+# FORMATA CAL (RESULTADOS)
+cal["MANDANTE"] = cal["MANDANTE"].apply(formatar)
+cal["VISITANTE"] = cal["VISITANTE"].apply(formatar)
+
+cal["GM"] = pd.to_numeric(cal["GM"], errors="coerce").fillna(0)
+cal["GV"] = pd.to_numeric(cal["GV"], errors="coerce").fillna(0)
 
 art["GOLS"] = pd.to_numeric(art["GOLS"], errors="coerce").fillna(0)
 art["JOGOS"] = pd.to_numeric(art["JOGOS"], errors="coerce").fillna(0)
@@ -88,7 +93,7 @@ st.markdown(f"🔄 Atualizado até: {data_atualizacao}")
 
 pagina = st.sidebar.radio(
     "Menu",
-    ["🏠 Home", "📈 Classificação", "🥇 Artilheiros", "🌍 Gols Estrangeiros", "📊 Invencibilidade"]
+    ["🏠 Home", "📈 Classificação", "🥇 Artilheiros", "🌍 Gols Estrangeiros", "📊 Invencibilidade", "📅 Resultados"]
 )
 
 # ========================
@@ -96,8 +101,9 @@ pagina = st.sidebar.radio(
 # ========================
 if pagina == "🏠 Home":
 
-    total_gols = int(art["GOLS"].sum())
-    total_jogos = int(cla["J"].sum())
+    # 🔥 CORRIGIDO
+    total_gols = int((cal["GM"] + cal["GV"]).sum())
+    total_jogos = len(cal)
 
     top_gols = cla.sort_values(by="GOL", ascending=False).iloc[0]
     top_vit = cla.sort_values(by="V", ascending=False).iloc[0]
@@ -113,7 +119,6 @@ if pagina == "🏠 Home":
 
     col4, col5 = st.columns(2)
 
-    # MAIS GOLS
     with col4:
         c1, c2 = st.columns([1, 4])
 
@@ -126,7 +131,6 @@ if pagina == "🏠 Home":
             st.markdown("🔥 **Mais gols**")
             st.markdown(f"### {top_gols['TIME']} - {int(top_gols['GOL'])}")
 
-    # MAIS VITÓRIAS
     with col5:
         c1, c2 = st.columns([1, 4])
 
@@ -198,5 +202,19 @@ elif pagina == "📊 Invencibilidade":
     df = df[df["INV"].notna()]
 
     df = df.sort_values(by="INV", ascending=False)
+
+    st.dataframe(df, use_container_width=True, hide_index=True)
+
+# ========================
+# 📅 RESULTADOS
+# ========================
+elif pagina == "📅 Resultados":
+
+    df = cal.copy()
+
+    # monta placar bonito
+    df["PLACAR"] = df["GM"].astype(int).astype(str) + " x " + df["GV"].astype(int).astype(str)
+
+    df = df[["MANDANTE", "PLACAR", "VISITANTE"]]
 
     st.dataframe(df, use_container_width=True, hide_index=True)
