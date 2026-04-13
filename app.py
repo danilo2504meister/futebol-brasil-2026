@@ -182,12 +182,24 @@ elif pagina == "🥇 Artilheiros":
 # ========================
 elif pagina == "🌍 Gols Estrangeiros":
 
-    df = est.copy()
+    df = art.copy()
 
-    if "PAIS" in df.columns:
-        df["PAIS"] = df["PAIS"].apply(lambda x: f"{bandeira(x)} {x}")
+    # remove brasileiros e vazios
+    df = df[df["PAIS"].notna()]
+    df = df[df["PAIS"] != ""]
+    df = df[df["PAIS"] != "BRA"]
 
-    df = df.sort_values(by="GOLS", ascending=False)
+    # adiciona bandeira
+    df["PAIS"] = df["PAIS"].apply(lambda x: f"{bandeira(x)} {x}")
+
+    # ordena
+    df = df.sort_values(by=["GOLS", "JOGADOR"], ascending=[False, True])
+
+    # ranking igual artilheiros
+    df["POS"] = df["GOLS"].rank(method="min", ascending=False).astype(int)
+
+    # seleciona colunas
+    df = df[["POS", "JOGADOR", "CLUBE", "GOLS", "PAIS"]]
 
     st.dataframe(df, use_container_width=True, hide_index=True)
 
