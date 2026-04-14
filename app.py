@@ -241,16 +241,3 @@ elif pagina == "📊 Invencibilidade":
 
     st.dataframe(df, use_container_width=True, hide_index=True)
 
-# ========================
-# 📅 RESULTADOS
-# ========================
-elif pagina == "📅 Resultados":
-
-    df = cal.copy()
-
-    # monta placar bonito
-    df["PLACAR"] = df["GM"].astype(int).astype(str) + " x " + df["GV"].astype(int).astype(str)
-
-    df = df[["MANDANTE", "PLACAR", "VISITANTE"]]
-
-    st.dataframe(df, use_container_width=True, hide_index=True)
