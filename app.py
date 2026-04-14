@@ -45,9 +45,14 @@ def bandeira(pais):
     }
     return flags.get(pais, "")
 
+def ordinal(x):
+    return f"{int(x)}º"
+
 def ranking(df, colunas, asc):
-    df = df.sort_values(by=colunas, ascending=asc)
+    df = df.sort_values(by=colunas, ascending=asc).reset_index(drop=True)
     df["POS"] = df[colunas].apply(tuple, axis=1).rank(method="min", ascending=asc[0]).astype(int)
+    df = df.sort_values(by="POS")
+    df["POS"] = df["POS"].apply(ordinal)
     return df
 
 # ========================
@@ -73,11 +78,8 @@ art["GOLS"] = pd.to_numeric(art["GOLS"], errors="coerce").fillna(0)
 art["JOGOS"] = pd.to_numeric(art["JOGOS"], errors="coerce").fillna(0)
 
 # ========================
-# HEADER
+# MENU
 # ========================
-st.title("⚽ Futebol Brasil 2026")
-st.markdown("🔄 Atualizado até: 13/04/2026")
-
 pagina = st.sidebar.radio(
     "Menu",
     [
@@ -94,6 +96,26 @@ pagina = st.sidebar.radio(
         "🚫 Clean Sheets"
     ]
 )
+
+# ========================
+# TÍTULOS DINÂMICOS
+# ========================
+titulos = {
+    "🏠 Home": "⚽ Futebol Brasil 2026",
+    "🥇 Artilheiros": "🥇 Artilheiros",
+    "🌍 Artilheiros Estrangeiros": "🌍 Artilheiros Estrangeiros",
+    "🌎 Gols por País": "🌎 Gols por País",
+    "📊 Invencibilidade": "📊 Invencibilidade",
+    "🔥 Melhores Ataques": "🔥 Melhores Ataques",
+    "📈 Média de Gols": "📈 Média de Gols",
+    "🏆 Vitórias": "🏆 Vitórias",
+    "🛡️ Média de Gols Levados": "🛡️ Média de Gols Levados",
+    "📊 Aproveitamento": "📊 Aproveitamento",
+    "🚫 Clean Sheets": "🚫 Clean Sheets"
+}
+
+st.title(titulos.get(pagina, "⚽ Futebol Brasil 2026"))
+st.markdown("🔄 Atualizado até: 13/04/2026")
 
 # ========================
 # HOME
@@ -120,6 +142,9 @@ elif pagina == "🥇 Artilheiros":
     df = art.copy()
     df = df.sort_values(by=["GOLS","JOGADOR"], ascending=[False, True])
     df["POS"] = df["GOLS"].rank(method="min", ascending=False).astype(int)
+    df = df.sort_values(by=["POS","JOGADOR"])
+    df["POS"] = df["POS"].apply(ordinal)
+
     st.dataframe(df[["POS","JOGADOR","CLUBE","GOLS"]], use_container_width=True, hide_index=True)
 
 # ========================
@@ -129,12 +154,14 @@ elif pagina == "🌍 Artilheiros Estrangeiros":
 
     df = art.copy()
     df = df[df["PAIS"].notna()]
-    df = df[df["PAIS"] != ""]
-    df = df[df["PAIS"] != "BRA"]
+    df = df[df["PAIS"].str.strip() != ""]
+    df = df[~df["PAIS"].str.upper().isin(["BRA","BRASIL"])]
 
     df["PAIS"] = df["PAIS"].apply(lambda x: f"{bandeira(x)} {x}")
     df = df.sort_values(by=["GOLS","JOGADOR"], ascending=[False, True])
     df["POS"] = df["GOLS"].rank(method="min", ascending=False).astype(int)
+    df = df.sort_values(by=["POS","JOGADOR"])
+    df["POS"] = df["POS"].apply(ordinal)
 
     st.dataframe(df[["POS","JOGADOR","CLUBE","GOLS","PAIS"]], use_container_width=True, hide_index=True)
 
@@ -145,7 +172,7 @@ elif pagina == "🌎 Gols por País":
 
     df = est.copy()
     df = df[df["PAIS"].notna()]
-    df = df[df["PAIS"] != ""]
+    df = df[df["PAIS"].str.strip() != ""]
     df["PAIS"] = df["PAIS"].apply(lambda x: f"{bandeira(x)} {x}")
 
     df = ranking(df, ["GOLS"], [False])
@@ -159,6 +186,7 @@ elif pagina == "📊 Invencibilidade":
 
     df = cla.copy()
     df = df[["TIME","INV","VIT","EMP"]]
+    df = df[df["INV"].notna()]
     df = df.sort_values(by="INV", ascending=False)
 
     st.dataframe(df, use_container_width=True, hide_index=True)
