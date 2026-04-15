@@ -150,12 +150,24 @@ if pagina == "🏠 Home":
     artilheiro_ext = estrangeiros.sort_values(by=["GOLS","JOGADOR"], ascending=[False, True]).iloc[0]
     top_pais = ranking_pais.iloc[0] if not ranking_pais.empty else pd.Series({"PAIS": "-", "GOLS": 0})
 
-    inv = cla.sort_values(by="INV", ascending=False).iloc[0]
-    vit = cla.sort_values(by="V", ascending=False).iloc[0]
-    mg = cla.sort_values(by="MG", ascending=False).iloc[0]
-    md = cla.sort_values(by="MD", ascending=True).iloc[0]
-    apr = cla.sort_values(by="AP", ascending=False).iloc[0]
-    jogos = cla.sort_values(by="J", ascending=False).iloc[0]
+    # EMPATES
+    max_inv = cla["INV"].max()
+    inv = cla[cla["INV"] == max_inv]
+
+    max_v = cla["V"].max()
+    vit = cla[cla["V"] == max_v]
+
+    max_mg = cla["MG"].max()
+    mg = cla[cla["MG"] == max_mg]
+
+    min_md = cla["MD"].min()
+    md = cla[cla["MD"] == min_md]
+
+    max_ap = cla["AP"].max()
+    apr = cla[cla["AP"] == max_ap]
+
+    max_j = cla["J"].max()
+    jogos = cla[cla["J"] == max_j]
 
     col1, col2 = st.columns(2)
 
@@ -163,14 +175,15 @@ if pagina == "🏠 Home":
         card("Artilheiro", f"{artilheiro['JOGADOR']} - {int(artilheiro['GOLS'])} gols", "🥇 Artilheiros", escudo=escudo_time(artilheiro["CLUBE"]))
         card("Artilheiro Estrangeiro", f"{artilheiro_ext['JOGADOR']} - {int(artilheiro_ext['GOLS'])} gols", "🌍 Artilheiros Estrangeiros", escudo=escudo_time(artilheiro_ext["CLUBE"]))
         card("País com mais gols", f"{bandeira(top_pais['PAIS'])} {top_pais['PAIS']} - {int(top_pais['GOLS'])} gols", "🌎 Gols por País")
-        card("Invencibilidade", f"{inv['TIME']} - {inv['INV']} jogos", "📊 Invencibilidade", escudo=escudo_time(inv["TIME"]))
-        card("Mais jogos", f"{jogos['TIME']} - {jogos['J']} jogos", "📅 Jogos por equipe", escudo=escudo_time(jogos["TIME"]))
+
+        card("Invencibilidade", f"{' | '.join(inv['TIME'])} - {int(max_inv)} jogos", "📊 Invencibilidade", escudo=escudo_time(inv.iloc[0]["TIME"]))
+        card("Mais jogos", f"{' | '.join(jogos['TIME'])} - {int(max_j)} jogos", "📅 Jogos por equipe", escudo=escudo_time(jogos.iloc[0]["TIME"]))
 
     with col2:
-        card("Média de gols", f"{mg['TIME']} - {mg['MG']} gols/jogo", "📈 Média de Gols", escudo=escudo_time(mg["TIME"]))
-        card("Vitórias", f"{vit['TIME']} - {vit['V']} vitórias", "🏆 Vitórias", escudo=escudo_time(vit["TIME"]))
-        card("Defesa", f"{md['TIME']} - {md['MD']} gols/jogo", "🛡️ Média de Gols Levados", escudo=escudo_time(md["TIME"]))
-        card("Aproveitamento", f"{apr['TIME']} - {apr['AP']}%", "📊 Aproveitamento", escudo=escudo_time(apr["TIME"]))
+        card("Média de gols", f"{' | '.join(mg['TIME'])} - {mg.iloc[0]['MG']} gols/jogo", "📈 Média de Gols", escudo=escudo_time(mg.iloc[0]["TIME"]))
+        card("Vitórias", f"{' | '.join(vit['TIME'])} - {int(max_v)} vitórias", "🏆 Vitórias", escudo=escudo_time(vit.iloc[0]["TIME"]))
+        card("Defesa", f"{' | '.join(md['TIME'])} - {md.iloc[0]['MD']} gols/jogo", "🛡️ Média de Gols Levados", escudo=escudo_time(md.iloc[0]["TIME"]))
+        card("Aproveitamento", f"{' | '.join(apr['TIME'])} - {apr.iloc[0]['AP']}%", "📊 Aproveitamento", escudo=escudo_time(apr.iloc[0]["TIME"]))
 
 # ========================
 # PÁGINAS
@@ -211,13 +224,11 @@ elif pagina == "🛡️ Média de Gols Levados":
     st.dataframe(df[["POS","TIME","MD","GL","J"]], use_container_width=True, hide_index=True)
 
 elif pagina == "📊 Aproveitamento":
-    df = ranking(cla.copy(), ["AP"], [False])
+    df = ranking(cla.copy(), ["AP","J"], [False, False])
     st.dataframe(df[["POS","TIME","AP","J"]], use_container_width=True, hide_index=True)
 
 elif pagina == "🚫 Clean Sheets":
-
     coluna = "CL_SH" if "CL_SH" in cla.columns else "CL SH"
-
     df = ranking(cla.copy(), [coluna], [False])
     st.dataframe(df[["POS","TIME",coluna,"J"]], use_container_width=True, hide_index=True)
 
