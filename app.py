@@ -19,9 +19,7 @@ body { background-color: #0e1117; color: white; }
     border: 1px solid #2a2f3a;
 }
 
-.card:hover {
-    border: 1px solid #555;
-}
+.card:hover { border: 1px solid #555; }
 
 div.stButton > button {
     width: 100%;
@@ -30,12 +28,6 @@ div.stButton > button {
     background-color: #1f2430;
     color: white;
     padding: 8px;
-    font-weight: 500;
-}
-
-div.stButton > button:hover {
-    background-color: #2a2f3a;
-    border: 1px solid #777;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -62,10 +54,7 @@ def escudo_time(nome):
     return caminho if os.path.exists(caminho) else None
 
 def bandeira(pais):
-    flags = {
-        "BRA": "🇧🇷","ARG": "🇦🇷","URU": "🇺🇾","PAR": "🇵🇾","COL": "🇨🇴",
-        "CHI": "🇨🇱","PER": "🇵🇪","VEN": "🇻🇪","EQU": "🇪🇨"
-    }
+    flags = {"BRA":"🇧🇷","ARG":"🇦🇷","URU":"🇺🇾","PAR":"🇵🇾","COL":"🇨🇴"}
     return flags.get(pais, "")
 
 def ordinal(x):
@@ -92,7 +81,6 @@ def card(titulo, conteudo, pagina_destino, icone="", escudo=None):
             st.markdown(f"**{icone} {titulo}**")
             st.markdown(f"### {conteudo}")
 
-        # BOTÃO COM KEY ÚNICA
         if st.button(pagina_destino, key=f"{titulo}_{pagina_destino}"):
             st.session_state["pagina"] = pagina_destino
 
@@ -112,7 +100,7 @@ def carregar():
 art, cla, est, cal = carregar()
 
 # ========================
-# TRATAMENTO
+# TRATAMENTO GLOBAL
 # ========================
 cla["TIME"] = cla["TIME"].apply(formatar)
 art["CLUBE"] = art["CLUBE"].apply(formatar)
@@ -120,17 +108,7 @@ art["CLUBE"] = art["CLUBE"].apply(formatar)
 art["GOLS"] = pd.to_numeric(art["GOLS"], errors="coerce").fillna(0)
 art["JOGOS"] = pd.to_numeric(art["JOGOS"], errors="coerce").fillna(0)
 
-# ========================
-# MÉTRICAS GERAIS (GLOBAL)
-# ========================
-
-cla["MG"] = (cla["GOL"] / cla["J"].replace(0,1)).round(2)
-cla["MD"] = (cla["GL"] / cla["J"].replace(0,1)).round(2)
-cla["AP"] = ((cla["V"]*3 + cla["E"]) / (cla["J"].replace(0,1)*3) * 100).round(2)
-
-# ========================
-# BASE ESTRANGEIROS (GLOBAL)
-# ========================
+# estrangeiros global
 estrangeiros = art[
     art["PAIS"].notna() &
     (art["PAIS"].str.strip() != "") &
@@ -139,47 +117,32 @@ estrangeiros = art[
 
 estrangeiros["PAIS"] = estrangeiros["PAIS"].str.strip().str.upper()
 
-# ========================
-# RANKING POR PAÍS (GLOBAL)
-# ========================
+# métricas globais
+cla["MG"] = (cla["GOL"] / cla["J"].replace(0,1)).round(2)
+cla["MD"] = (cla["GL"] / cla["J"].replace(0,1)).round(2)
+cla["AP"] = ((cla["V"]*3 + cla["E"]) / (cla["J"].replace(0,1)*3) * 100).round(2)
+
+# ranking países global
 ranking_pais = (
-    estrangeiros
-    .groupby("PAIS")["GOLS"]
+    estrangeiros.groupby("PAIS")["GOLS"]
     .sum()
     .reset_index()
     .sort_values(by="GOLS", ascending=False)
 )
 
 # ========================
-# MENU PADRONIZADO
+# MENU
 # ========================
-menu_opcoes = [
-    "🏠 Home",
-    "🥇 Artilheiros",
-    "🌍 Artilheiros Estrangeiros",
-    "🌎 Gols por País",
-    "📊 Invencibilidade",
-    "🔥 Melhores Ataques",
-    "📈 Média de Gols",
-    "🏆 Vitórias",
-    "🛡️ Média de Gols Levados",
-    "📊 Aproveitamento",
-    "🚫 Clean Sheets",
-    "📅 Jogos por equipe"
+menu = [
+    "🏠 Home","🥇 Artilheiros","🌍 Artilheiros Estrangeiros",
+    "🌎 Gols por País","📊 Invencibilidade","🔥 Melhores Ataques",
+    "📈 Média de Gols","🏆 Vitórias","🛡️ Média de Gols Levados",
+    "📊 Aproveitamento","🚫 Clean Sheets","📅 Jogos por equipe"
 ]
 
-if "pagina" not in st.session_state:
-    st.session_state["pagina"] = "🏠 Home"
+pagina = st.sidebar.radio("Menu", menu)
 
-pagina = st.sidebar.radio("Menu", menu_opcoes)
-
-st.session_state["pagina"] = pagina
-
-# ========================
-# TÍTULO
-# ========================
 st.title(pagina)
-st.markdown("🔄 Atualizado até: 13/04/2026")
 
 # ========================
 # HOME
@@ -187,56 +150,48 @@ st.markdown("🔄 Atualizado até: 13/04/2026")
 if pagina == "🏠 Home":
 
     artilheiro = art.sort_values(by=["GOLS","JOGADOR"], ascending=[False, True]).iloc[0]
-
     artilheiro_ext = estrangeiros.sort_values(by=["GOLS","JOGADOR"], ascending=[False, True]).iloc[0]
-
     top_pais = ranking_pais.iloc[0]
 
     inv = cla.sort_values(by="INV", ascending=False).iloc[0]
-    vit = cla.sort_values(by=["V","J"], ascending=[False, True]).iloc[0]
-
+    vit = cla.sort_values(by="V", ascending=False).iloc[0]
+    mg = cla.sort_values(by="MG", ascending=False).iloc[0]
+    md = cla.sort_values(by="MD", ascending=True).iloc[0]
+    apr = cla.sort_values(by="AP", ascending=False).iloc[0]
     jogos = cla.sort_values(by="J", ascending=False).iloc[0]
 
-    col1, col2 = st.columns([1,1])
+    col1, col2 = st.columns(2)
 
     with col1:
-        card("Artilheiro", f"{artilheiro['JOGADOR']} - {int(artilheiro['GOLS'])} gols", "🥇 Artilheiros", "🥇")
-        card("Artilheiro Estrangeiro", f"{artilheiro_ext['JOGADOR']} - {int(artilheiro_ext['GOLS'])} gols", "🌍 Artilheiros Estrangeiros", "🌍")
-        card("País com mais gols", f"{bandeira(top_pais['PAIS'])} {top_pais['PAIS']} - {int(top_pais['GOLS'])} gols", "🌎 Gols por País", "🌎")
-        card("Maior Invencibilidade", f"{inv['TIME']} - {int(inv['INV'])} jogos", "📊 Invencibilidade", "📊", escudo_time(inv["TIME"]))
-        card("Mais jogos disputados", f"{jogos['TIME']} - {int(jogos['J'])} jogos", "📅 Jogos por equipe", "📅", escudo_time(jogos["TIME"]))
+        card("Artilheiro", f"{artilheiro['JOGADOR']} - {int(artilheiro['GOLS'])} gols", "🥇 Artilheiros")
+        card("Artilheiro Estrangeiro", f"{artilheiro_ext['JOGADOR']} - {int(artilheiro_ext['GOLS'])} gols", "🌍 Artilheiros Estrangeiros")
+        card("País com mais gols", f"{bandeira(top_pais['PAIS'])} {top_pais['PAIS']} - {int(top_pais['GOLS'])} gols", "🌎 Gols por País")
+        card("Invencibilidade", f"{inv['TIME']} - {inv['INV']} jogos", "📊 Invencibilidade")
+        card("Mais jogos", f"{jogos['TIME']} - {jogos['J']} jogos", "📅 Jogos por equipe")
 
     with col2:
-        card("Maior média de gols", f"{mg['TIME']} - {mg['MG']} gols/jogo", "📈 Média de Gols", "📈", escudo_time(mg["TIME"]))
-        card("Mais vitórias", f"{vit['TIME']} - {int(vit['V'])} vitórias", "🏆 Vitórias", "🏆", escudo_time(vit["TIME"]))
-        card("Melhor defesa", f"{md['TIME']} - {md['MD']} gols/jogo", "🛡️ Média de Gols Levados", "🛡️", escudo_time(md["TIME"]))
-        card("Maior aproveitamento", f"{apr['TIME']} - {apr['AP']}%", "📊 Aproveitamento", "📊", escudo_time(apr["TIME"]))
+        card("Média de gols", f"{mg['TIME']} - {mg['MG']} gols/jogo", "📈 Média de Gols")
+        card("Vitórias", f"{vit['TIME']} - {vit['V']} vitórias", "🏆 Vitórias")
+        card("Defesa", f"{md['TIME']} - {md['MD']} gols/jogo", "🛡️ Média de Gols Levados")
+        card("Aproveitamento", f"{apr['TIME']} - {apr['AP']}%", "📊 Aproveitamento")
 
 # ========================
-# NOVA PÁGINA
+# PÁGINAS
 # ========================
-elif pagina == "📅 Jogos por equipe":
-
-    df = cla[["TIME","J"]].copy()
-    df = ranking(df, ["J"], [False])
-
-    st.dataframe(df[["POS","TIME","J"]], use_container_width=True, hide_index=True)
-
 elif pagina == "🥇 Artilheiros":
     df = ranking(art.copy(), ["GOLS"], [False])
     st.dataframe(df[["POS","JOGADOR","CLUBE","GOLS"]], use_container_width=True, hide_index=True)
 
 elif pagina == "🌍 Artilheiros Estrangeiros":
-    df = estrangeiros.copy()
-    df = ranking(df, ["GOLS"], [False])
+    df = ranking(estrangeiros.copy(), ["GOLS"], [False])
     st.dataframe(df[["POS","JOGADOR","CLUBE","GOLS","PAIS"]], use_container_width=True, hide_index=True)
 
 elif pagina == "🌎 Gols por País":
     df = ranking(ranking_pais.copy(), ["GOLS"], [False])
-    st.dataframe(df[["POS","PAIS","GOLS"]], use_container_width=True, hide_index=True)
+    st.dataframe(df, use_container_width=True, hide_index=True)
 
 elif pagina == "📊 Invencibilidade":
-    df = cla.sort_values(by="INV", ascending=False)
+    df = ranking(cla.copy(), ["INV"], [False])
     st.dataframe(df[["POS","TIME","INV"]], use_container_width=True, hide_index=True)
 
 elif pagina == "🔥 Melhores Ataques":
@@ -262,3 +217,7 @@ elif pagina == "📊 Aproveitamento":
 elif pagina == "🚫 Clean Sheets":
     df = ranking(cla.copy(), ["CL_SH"], [False])
     st.dataframe(df[["POS","TIME","CL_SH"]], use_container_width=True, hide_index=True)
+
+elif pagina == "📅 Jogos por equipe":
+    df = ranking(cla.copy(), ["J"], [False])
+    st.dataframe(df[["POS","TIME","J"]], use_container_width=True, hide_index=True)
