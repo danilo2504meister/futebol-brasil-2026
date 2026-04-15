@@ -115,12 +115,12 @@ menu_opcoes = [
     "🥇 Artilheiros",
     "🌍 Artilheiros Estrangeiros",
     "🌎 Gols por País",
-    "📊 Invencibilidade",
+    "📊 Invencibilidade Atual",
     "🔥 Melhores Ataques",
     "📈 Média de Gols",
     "🏆 Vitórias",
     "🛡️ Média de Gols Levados",
-    "📊 Aproveitamento",
+    "📊 Aproveitamento de Pontos",
     "🚫 Clean Sheets"
 ]
 
@@ -187,18 +187,18 @@ if pagina == "🏠 Home":
     col1, col2 = st.columns(2)
 
     with col1:
-        card("Artilheiros", f"{artilheiro['JOGADOR']} - {int(artilheiro['GOLS'])}", "🥇 Artilheiros", "🥇")
-        card("Artilheiros Estrangeiros", f"{artilheiro_ext['JOGADOR']} - {int(artilheiro_ext['GOLS'])}", "🌍 Artilheiros Estrangeiros", "🌍")
-        card("Gols por País", f"{bandeira(top_pais['PAIS'])} {top_pais['PAIS']} - {int(top_pais['GOLS'])}", "🌎 Gols por País", "🌎")
-        card("Invencibilidade", f"{inv['TIME']} - {int(inv['INV'])}", "📊 Invencibilidade", "📊", escudo_time(inv["TIME"]))
-        card("Melhores Ataques", f"{ataque['TIME']} - {int(ataque['GOL'])}", "🔥 Melhores Ataques", "🔥", escudo_time(ataque["TIME"]))
+        card("Artilheiros", f"{artilheiro['JOGADOR']} - {int(artilheiro['GOLS'])}", "🥇 Artilheiro", "🥇")
+        card("Artilheiro Estrangeiros", f"{artilheiro_ext['JOGADOR']} - {int(artilheiro_ext['GOLS'])}", "🌍 Artilheiro Estrangeiro", "🌍")
+        card("Gols por País", f"{bandeira(top_pais['PAIS'])} {top_pais['PAIS']} - {int(top_pais['GOLS'])}", "🌎 País Estrangeiro com mais Gols", "🌎")
+        card("Invencibilidade", f"{inv['TIME']} - {int(inv['INV'])}", "📊 Maior Invencibilidade Atual", "📊", escudo_time(inv["TIME"]))
+        card("Melhores Ataques", f"{ataque['TIME']} - {int(ataque['GOL'])}", "🔥 Melhor Ataque", "🔥", escudo_time(ataque["TIME"]))
 
     with col2:
-        card("Média de Gols", f"{mg['TIME']} - {mg['MG']}", "📈 Média de Gols", "📈", escudo_time(mg["TIME"]))
-        card("Vitórias", f"{vit['TIME']} - {int(vit['V'])}", "🏆 Vitórias", "🏆", escudo_time(vit["TIME"]))
-        card("Média de Gols Levados", f"{md['TIME']} - {md['MD']}", "🛡️ Média de Gols Levados", "🛡️", escudo_time(md["TIME"]))
-        card("Aproveitamento", f"{apr['TIME']} - {apr['APROVEITAMENTO']}%", "📊 Aproveitamento", "📊", escudo_time(apr["TIME"]))
-        card("Clean Sheets", f"{cs['TIME']} - {int(cs['CL_SH'])}", "🚫 Clean Sheets", "🚫", escudo_time(cs["TIME"]))
+        card("Média de Gols", f"{mg['TIME']} - {mg['MG']}", "📈 Melhor Média de Gols", "📈", escudo_time(mg["TIME"]))
+        card("Vitórias", f"{vit['TIME']} - {int(vit['V'])}", "🏆 Mais Vitórias", "🏆", escudo_time(vit["TIME"]))
+        card("Média de Gols Levados", f"{md['TIME']} - {md['MD']}", "🛡️ Menor Média de Gols Levados", "🛡️", escudo_time(md["TIME"]))
+        card("Aproveitamento", f"{apr['TIME']} - {apr['APROVEITAMENTO']}%", "📊 Melhor Aproveitamento de Pontos", "📊", escudo_time(apr["TIME"]))
+        card("Clean Sheets", f"{cs['TIME']} - {int(cs['CL_SH'])}", "🚫 Mais Clean Sheets", "🚫", escudo_time(cs["TIME"]))
 
 # ========================
 # RESTANTE DAS PÁGINAS (mantidas)
