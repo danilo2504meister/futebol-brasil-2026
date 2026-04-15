@@ -176,16 +176,16 @@ if pagina == "🏠 Home":
     with col1:
         card("Artilheiro", f"{artilheiro['JOGADOR']} - {int(artilheiro['GOLS'])} gols", "🥇 Artilheiros", escudo=escudo_time(artilheiro["CLUBE"]))
         card("Artilheiro Estrangeiro", f"{artilheiro_ext['JOGADOR']} - {int(artilheiro_ext['GOLS'])} gols", "🌍 Artilheiros Estrangeiros", escudo=escudo_time(artilheiro_ext["CLUBE"]))
-        card("País com mais gols", f"{bandeira(top_pais['PAIS'])} {top_pais['PAIS']} - {int(top_pais['GOLS'])} gols", "🌎 Gols por País")
+        card("País estrangeiro com mais gols", f"{bandeira(top_pais['PAIS'])} {top_pais['PAIS']} - {int(top_pais['GOLS'])} gols", "🌎 Gols por País")
 
-        card("Invencibilidade", f"{' | '.join(inv['TIME'])} - {int(max_inv)} jogos", "📊 Invencibilidade", escudo=escudo_time(inv.iloc[0]["TIME"]))
-        card("Mais jogos", f"{' | '.join(jogos['TIME'])} - {int(max_j)} jogos", "📅 Jogos por equipe", escudo=escudo_time(jogos.iloc[0]["TIME"]))
+        card("Maior Invencibilidade Atual", f"{' | '.join(inv['TIME'])} - {int(max_inv)} jogos", "📊 Invencibilidade", escudo=escudo_time(inv.iloc[0]["TIME"]))
+        card("Clube com Mais jogos", f"{' | '.join(jogos['TIME'])} - {int(max_j)} jogos", "📅 Jogos por equipe", escudo=escudo_time(jogos.iloc[0]["TIME"]))
 
     with col2:
-        card("Média de gols", f"{' | '.join(mg['TIME'])} - {mg.iloc[0]['MG']} gols/jogo", "📈 Média de Gols", escudo=escudo_time(mg.iloc[0]["TIME"]))
-        card("Vitórias", f"{' | '.join(vit['TIME'])} - {int(max_v)} vitórias", "🏆 Vitórias", escudo=escudo_time(vit.iloc[0]["TIME"]))
-        card("Defesa", f"{' | '.join(md['TIME'])} - {md.iloc[0]['MD']} gols/jogo", "🛡️ Média de Gols Levados", escudo=escudo_time(md.iloc[0]["TIME"]))
-        card("Aproveitamento", f"{' | '.join(apr['TIME'])} - {apr.iloc[0]['AP']}%", "📊 Aproveitamento", escudo=escudo_time(apr.iloc[0]["TIME"]))
+        card("Maior Média de gols por jogo", f"{' | '.join(mg['TIME'])} - {mg.iloc[0]['MG']} gols/jogo", "📈 Média de Gols", escudo=escudo_time(mg.iloc[0]["TIME"]))
+        card("Mais Vitórias", f"{' | '.join(vit['TIME'])} - {int(max_v)} vitórias", "🏆 Vitórias", escudo=escudo_time(vit.iloc[0]["TIME"]))
+        card("Menor Média de Gols Levados", f"{' | '.join(md['TIME'])} - {md.iloc[0]['MD']} gols/jogo", "🛡️ Média de Gols Levados", escudo=escudo_time(md.iloc[0]["TIME"]))
+        card("Melhor Aproveitamento de Pontos", f"{' | '.join(apr['TIME'])} - {apr.iloc[0]['AP']}%", "📊 Aproveitamento", escudo=escudo_time(apr.iloc[0]["TIME"]))
 
 # ========================
 # PÁGINAS
