@@ -121,6 +121,36 @@ art["GOLS"] = pd.to_numeric(art["GOLS"], errors="coerce").fillna(0)
 art["JOGOS"] = pd.to_numeric(art["JOGOS"], errors="coerce").fillna(0)
 
 # ========================
+# MÉTRICAS GERAIS (GLOBAL)
+# ========================
+
+cla["MG"] = (cla["GOL"] / cla["J"].replace(0,1)).round(2)
+cla["MD"] = (cla["GL"] / cla["J"].replace(0,1)).round(2)
+cla["AP"] = ((cla["V"]*3 + cla["E"]) / (cla["J"].replace(0,1)*3) * 100).round(2)
+
+# ========================
+# BASE ESTRANGEIROS (GLOBAL)
+# ========================
+estrangeiros = art[
+    art["PAIS"].notna() &
+    (art["PAIS"].str.strip() != "") &
+    (~art["PAIS"].str.upper().isin(["BRA","BRASIL"]))
+].copy()
+
+estrangeiros["PAIS"] = estrangeiros["PAIS"].str.strip().str.upper()
+
+# ========================
+# RANKING POR PAÍS (GLOBAL)
+# ========================
+ranking_pais = (
+    estrangeiros
+    .groupby("PAIS")["GOLS"]
+    .sum()
+    .reset_index()
+    .sort_values(by="GOLS", ascending=False)
+)
+
+# ========================
 # MENU PADRONIZADO
 # ========================
 menu_opcoes = [
@@ -158,37 +188,12 @@ if pagina == "🏠 Home":
 
     artilheiro = art.sort_values(by=["GOLS","JOGADOR"], ascending=[False, True]).iloc[0]
 
-    estrangeiros = art[
-        art["PAIS"].notna() &
-        (art["PAIS"].str.strip() != "") &
-        (~art["PAIS"].str.upper().isin(["BRA","BRASIL"]))
-    ]
-
     artilheiro_ext = estrangeiros.sort_values(by=["GOLS","JOGADOR"], ascending=[False, True]).iloc[0]
-
-    pais_gols = estrangeiros.copy()
-    pais_gols["PAIS"] = pais_gols["PAIS"].str.strip().str.upper()
-
-    ranking_pais = (
-        pais_gols.groupby("PAIS")["GOLS"]
-        .sum()
-        .reset_index()
-        .sort_values(by="GOLS", ascending=False)
-    )
 
     top_pais = ranking_pais.iloc[0]
 
     inv = cla.sort_values(by="INV", ascending=False).iloc[0]
     vit = cla.sort_values(by=["V","J"], ascending=[False, True]).iloc[0]
-
-    cla["MG"] = (cla["GOL"] / cla["J"].replace(0,1)).round(2)
-    mg = cla.sort_values(by="MG", ascending=False).iloc[0]
-
-    cla["MD"] = (cla["GL"] / cla["J"].replace(0,1)).round(2)
-    md = cla.sort_values(by="MD", ascending=True).iloc[0]
-
-    cla["AP"] = ((cla["V"]*3 + cla["E"]) / (cla["J"].replace(0,1)*3) * 100).round(2)
-    apr = cla.sort_values(by="AP", ascending=False).iloc[0]
 
     jogos = cla.sort_values(by="J", ascending=False).iloc[0]
 
@@ -217,9 +222,6 @@ elif pagina == "📅 Jogos por equipe":
 
     st.dataframe(df[["POS","TIME","J"]], use_container_width=True, hide_index=True)
 
-# ========================
-# RESTANTE
-# ========================
 elif pagina == "🥇 Artilheiros":
     df = ranking(art.copy(), ["GOLS"], [False])
     st.dataframe(df[["POS","JOGADOR","CLUBE","GOLS"]], use_container_width=True, hide_index=True)
@@ -235,28 +237,28 @@ elif pagina == "🌎 Gols por País":
 
 elif pagina == "📊 Invencibilidade":
     df = cla.sort_values(by="INV", ascending=False)
-    st.dataframe(df[["TIME","INV"]], use_container_width=True)
+    st.dataframe(df[["POS","TIME","INV"]], use_container_width=True, hide_index=True)
 
 elif pagina == "🔥 Melhores Ataques":
     df = ranking(cla.copy(), ["GOL"], [False])
-    st.dataframe(df[["POS","TIME","GOL"]], use_container_width=True)
+    st.dataframe(df[["POS","TIME","GOL"]], use_container_width=True, hide_index=True)
 
 elif pagina == "📈 Média de Gols":
     df = ranking(cla.copy(), ["MG"], [False])
-    st.dataframe(df[["POS","TIME","MG"]], use_container_width=True)
+    st.dataframe(df[["POS","TIME","MG"]], use_container_width=True, hide_index=True)
 
 elif pagina == "🏆 Vitórias":
     df = ranking(cla.copy(), ["V"], [False])
-    st.dataframe(df[["POS","TIME","V"]], use_container_width=True)
+    st.dataframe(df[["POS","TIME","V"]], use_container_width=True, hide_index=True)
 
 elif pagina == "🛡️ Média de Gols Levados":
     df = ranking(cla.copy(), ["MD"], [True])
-    st.dataframe(df[["POS","TIME","MD"]], use_container_width=True)
+    st.dataframe(df[["POS","TIME","MD"]], use_container_width=True, hide_index=True)
 
 elif pagina == "📊 Aproveitamento":
     df = ranking(cla.copy(), ["AP"], [False])
-    st.dataframe(df[["POS","TIME","AP"]], use_container_width=True)
+    st.dataframe(df[["POS","TIME","AP"]], use_container_width=True, hide_index=True)
 
 elif pagina == "🚫 Clean Sheets":
     df = ranking(cla.copy(), ["CL_SH"], [False])
-    st.dataframe(df[["POS","TIME","CL_SH"]], use_container_width=True)
+    st.dataframe(df[["POS","TIME","CL_SH"]], use_container_width=True, hide_index=True)
