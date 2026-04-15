@@ -92,8 +92,8 @@ def card(titulo, conteudo, pagina_destino, icone="", escudo=None):
             st.markdown(f"**{icone} {titulo}**")
             st.markdown(f"### {conteudo}")
 
-        # BOTÃO USANDO NOME DO MENU
-        if st.button(pagina_destino, key=titulo):
+        # BOTÃO COM KEY ÚNICA
+        if st.button(pagina_destino, key=f"{titulo}_{pagina_destino}"):
             st.session_state["pagina"] = pagina_destino
 
         st.markdown('</div>', unsafe_allow_html=True)
@@ -121,7 +121,7 @@ art["GOLS"] = pd.to_numeric(art["GOLS"], errors="coerce").fillna(0)
 art["JOGOS"] = pd.to_numeric(art["JOGOS"], errors="coerce").fillna(0)
 
 # ========================
-# MENU
+# MENU PADRONIZADO
 # ========================
 menu_opcoes = [
     "🏠 Home",
@@ -163,9 +163,9 @@ if pagina == "🏠 Home":
         (art["PAIS"].str.strip() != "") &
         (~art["PAIS"].str.upper().isin(["BRA","BRASIL"]))
     ]
+
     artilheiro_ext = estrangeiros.sort_values(by=["GOLS","JOGADOR"], ascending=[False, True]).iloc[0]
 
-    # 🔥 CORRETO AGORA (por jogadores)
     pais_gols = estrangeiros.copy()
     pais_gols["PAIS"] = pais_gols["PAIS"].str.strip().str.upper()
 
@@ -181,18 +181,18 @@ if pagina == "🏠 Home":
     inv = cla.sort_values(by="INV", ascending=False).iloc[0]
     vit = cla.sort_values(by=["V","J"], ascending=[False, True]).iloc[0]
 
-    cla["MG"] = (cla["GOL"] / cla["J"]).round(2)
+    cla["MG"] = (cla["GOL"] / cla["J"].replace(0,1)).round(2)
     mg = cla.sort_values(by="MG", ascending=False).iloc[0]
 
-    cla["MD"] = (cla["GL"] / cla["J"]).round(2)
+    cla["MD"] = (cla["GL"] / cla["J"].replace(0,1)).round(2)
     md = cla.sort_values(by="MD", ascending=True).iloc[0]
 
-    cla["AP"] = ((cla["V"]*3 + cla["E"]) / (cla["J"]*3) * 100).round(2)
+    cla["AP"] = ((cla["V"]*3 + cla["E"]) / (cla["J"].replace(0,1)*3) * 100).round(2)
     apr = cla.sort_values(by="AP", ascending=False).iloc[0]
 
     jogos = cla.sort_values(by="J", ascending=False).iloc[0]
 
-    col1, col2 = st.columns(2)
+    col1, col2 = st.columns([1,1])
 
     with col1:
         card("Artilheiro", f"{artilheiro['JOGADOR']} - {int(artilheiro['GOLS'])} gols", "🥇 Artilheiros", "🥇")
@@ -218,7 +218,7 @@ elif pagina == "📅 Jogos por equipe":
     st.dataframe(df[["POS","TIME","J"]], use_container_width=True, hide_index=True)
 
 # ========================
-# RESTANTE (mantido)
+# RESTANTE
 # ========================
 elif pagina == "🥇 Artilheiros":
     df = ranking(art.copy(), ["GOLS"], [False])
