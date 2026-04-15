@@ -126,7 +126,7 @@ ranking_pais = (
     .reset_index()
     .sort_values(by="GOLS", ascending=False)
 )
-
+ =DATA_ATUALIZACAO "14/04/2026"
 # ========================
 # MENU
 # ========================
@@ -140,6 +140,8 @@ menu = [
 pagina = st.sidebar.radio("Menu", menu)
 
 st.title(pagina)
+st.caption(f"Atualizado até: {DATA_ATUALIZACAO}")
+
 
 # ========================
 # HOME
