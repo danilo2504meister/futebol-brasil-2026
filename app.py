@@ -96,7 +96,7 @@ def carregar():
     cla = pd.read_excel("br26.xlsx", sheet_name="CLA")
     est = pd.read_excel("br26.xlsx", sheet_name="EST")
     cal = pd.read_excel("br26.xlsx", sheet_name="CAL")
-    inv = pd.read_excel("br26.xlsx", sheet_name="INV")  # NOVO
+    inv = pd.read_excel("br26.xlsx", sheet_name="INV")
     return limpar(art), limpar(cla), limpar(est), limpar(cal), limpar(inv)
 
 art, cla, est, cal, inv = carregar()
@@ -106,11 +106,6 @@ art, cla, est, cal, inv = carregar()
 # ========================
 cla["TIME"] = cla["TIME"].apply(formatar)
 art["CLUBE"] = art["CLUBE"].apply(formatar)
-
-# MERGE INV
-cla["ID_CLUBE"] = cla["ID_CLUBE"].astype(str).str.strip().str.lower()
-inv["ID_CLUBE"] = inv["ID_CLUBE"].astype(str).str.strip().str.lower()
-cla = cla.merge(inv[["ID_CLUBE", "INV"]], on="ID_CLUBE", how="left")
 
 # APROVEITAMENTO %
 cla["APROVEITAMENTO"] = (
@@ -165,8 +160,8 @@ if pagina == "🏠 Home":
 
     top_pais = ranking_pais.iloc[0] if not ranking_pais.empty else pd.Series({"PAIS": "-", "GOLS": 0})
 
-    max_inv = cla["INV"].max()
-    inv = cla[cla["INV"] == max_inv]
+    max_inv = inv["INV"].max()
+    inv_home = inv[inv["INV"] == max_inv]
 
     max_v = cla["V"].max()
     vit = cla[cla["V"] == max_v]
@@ -193,7 +188,7 @@ if pagina == "🏠 Home":
 
         card("País estrangeiro com mais gols", f"{bandeira(top_pais['PAIS'])} {top_pais['PAIS']} - {int(top_pais['GOLS'])} gols", "🌎 Gols por País")
 
-        card("Maior Invencibilidade Atual", f"{' | '.join(inv['TIME'])} - {int(max_inv)} jogos", "📊 Invencibilidade", escudo=escudo_time(inv.iloc[0]["TIME"]))
+        card("Maior Invencibilidade Atual", f"{' | '.join(inv_home['TIME'])} - {int(max_inv)} jogos", "📊 Invencibilidade", escudo=escudo_time(inv_home.iloc[0]["TIME"]))
         card("Clube com Mais jogos", f"{' | '.join(jogos['TIME'])} - {int(max_j)} jogos", "📅 Jogos por equipe", escudo=escudo_time(jogos.iloc[0]["TIME"]))
 
     with col2:
@@ -218,7 +213,7 @@ elif pagina == "🌎 Gols por País":
     st.dataframe(df[["POS","PAIS","GOLS"]], use_container_width=True, hide_index=True)
 
 elif pagina == "📊 Invencibilidade":
-    df = cla.copy()
+    df = inv.copy()
     df = df[df["INV"].notna()]
     df = df[df["INV"] > 0]
     df = ranking(df, ["INV"], [False])
