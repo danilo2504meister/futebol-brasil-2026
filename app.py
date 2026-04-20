@@ -220,11 +220,8 @@ elif pagina == "🌎 Gols por País":
     st.dataframe(df[["POS","PAIS","GOLS"]], use_container_width=True, hide_index=True)
 
 elif pagina == "📊 Invencibilidade":
-    df = cla.copy()
-    df = df[df["INV"].notna()]
-    df = df[df["INV"] > 0]
     df = ranking(df, ["INV"], [False])
-    st.dataframe(df[["POS","CLUBE","INV"]], use_container_width=True, hide_index=True)
+    st.dataframe(df[["POS","CLUBE","INV","VIT","EMP"]], use_container_width=True, hide_index=True)
 
 elif pagina == "🔥 Melhores Ataques":
     df = ranking(cla.copy(), ["GOL"], [False])
