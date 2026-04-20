@@ -87,6 +87,13 @@ def card(titulo, conteudo, pagina_destino, icone="", escudo=None):
 
         st.markdown('</div>', unsafe_allow_html=True)
 
+def ranking(df, colunas, asc):
+    df = df.sort_values(by=colunas, ascending=asc).reset_index(drop=True)
+    df["POS"] = df[colunas].apply(tuple, axis=1).rank(method="min", ascending=asc[0]).astype(int)
+    df = df.sort_values(by="POS")
+    df["POS"] = df["POS"].apply(ordinal)
+    return df
+
 # ========================
 # DADOS
 # ========================
@@ -220,8 +227,20 @@ elif pagina == "🌎 Gols por País":
     st.dataframe(df[["POS","PAIS","GOLS"]], use_container_width=True, hide_index=True)
 
 elif pagina == "📊 Invencibilidade":
-    df = ranking(df, ["INV"], [False])
-    st.dataframe(df[["POS","CLUBE","INV","VIT","EMP"]], use_container_width=True, hide_index=True)
+
+    df = inv.copy()
+
+    df["INV"] = pd.to_numeric(df["INV"], errors="coerce").fillna(0)
+    df["VIT"] = pd.to_numeric(df["VIT"], errors="coerce").fillna(0)
+    df["EMP"] = pd.to_numeric(df["EMP"], errors="coerce").fillna(0)
+
+    df = ranking(df, ["INV", "VIT", "EMP"], [False, False, False])
+
+    st.dataframe(
+        df[["POS","CLUBE","INV","VIT","EMP"]],
+        use_container_width=True,
+        hide_index=True
+    )
 
 elif pagina == "🔥 Melhores Ataques":
     df = ranking(cla.copy(), ["GOLS"], [False])
@@ -243,7 +262,7 @@ elif pagina == "🛡️ Média de Gols Levados":
 
 elif pagina == "📊 Aproveitamento":
     df = ranking(cla.copy(), ["AP","J"], [False, False])
-    st.dataframe(df[["POS","CLUBE","AP","J"]], use_container_width=True, hide_index=True)
+    st.dataframe(df[["POS","CLUBE","APROVEITAMENTO","J"]], use_container_width=True, hide_index=True)
 
 elif pagina == "🚫 Clean Sheets":
     coluna = "CL_SH" if "CL_SH" in cla.columns else "CL SH"
