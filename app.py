@@ -104,7 +104,7 @@ art, cla, est, cal, inv = carregar()
 # ========================
 # TRATAMENTO GLOBAL
 # ========================
-cla["TIME"] = cla["TIME"].apply(formatar)
+cla["CLUBE"] = cla["CLUBE"].apply(formatar)
 art["CLUBE"] = art["CLUBE"].apply(formatar)
 
 # APROVEITAMENTO %
@@ -217,34 +217,34 @@ elif pagina == "📊 Invencibilidade":
     df = df[df["INV"].notna()]
     df = df[df["INV"] > 0]
     df = ranking(df, ["INV"], [False])
-    st.dataframe(df[["POS","TIME","INV"]], use_container_width=True, hide_index=True)
+    st.dataframe(df[["POS","CLUBE","INV","VIT","EMP"]], use_container_width=True, hide_index=True)
 
 elif pagina == "🔥 Melhores Ataques":
     df = ranking(cla.copy(), ["GOLS"], [False])
-    st.dataframe(df[["POS","TIME","GOLS","J"]], use_container_width=True, hide_index=True)
+    st.dataframe(df[["POS","CLUBE","GOLS","J"]], use_container_width=True, hide_index=True)
 
 elif pagina == "📈 Média de Gols":
     df = ranking(cla.copy(), ["MG"], [False])
-    st.dataframe(df[["POS","TIME","MG","GOLS","J"]], use_container_width=True, hide_index=True)
+    st.dataframe(df[["POS","CLUBE","MG","GOLS","J"]], use_container_width=True, hide_index=True)
 
 elif pagina == "🏆 Vitórias":
     df = ranking(cla.copy(), ["V"], [False])
-    st.dataframe(df[["POS","TIME","V","J"]], use_container_width=True, hide_index=True)
+    st.dataframe(df[["POS","CLUBE","V","J"]], use_container_width=True, hide_index=True)
 
 elif pagina == "🛡️ Média de Gols Levados":
     df = ranking(cla.copy(), ["MD"], [True])
-    st.dataframe(df[["POS","TIME","MD","GL","J"]], use_container_width=True, hide_index=True)
+    st.dataframe(df[["POS","CLUBE","MD","GL","J"]], use_container_width=True, hide_index=True)
 
 elif pagina == "📊 Aproveitamento":
     df = ranking(cla.copy(), ["APROVEITAMENTO","J"], [False, False])
     df["APROVEITAMENTO"] = df["APROVEITAMENTO"].astype(str) + "%"
-    st.dataframe(df[["POS","TIME","APROVEITAMENTO","J"]], use_container_width=True, hide_index=True)
+    st.dataframe(df[["POS","CLUBE","APROVEITAMENTO","J"]], use_container_width=True, hide_index=True)
 
 elif pagina == "🚫 Clean Sheets":
     coluna = "CL_SH" if "CL_SH" in cla.columns else "CL SH"
     df = ranking(cla.copy(), [coluna], [False])
-    st.dataframe(df[["POS","TIME",coluna,"J"]], use_container_width=True, hide_index=True)
+    st.dataframe(df[["POS","CLUBE",coluna,"J"]], use_container_width=True, hide_index=True)
 
 elif pagina == "📅 Jogos por equipe":
     df = ranking(cla.copy(), ["J"], [False])
-    st.dataframe(df[["POS","TIME","J"]], use_container_width=True, hide_index=True)
+    st.dataframe(df[["POS","CLUBE","J"]], use_container_width=True, hide_index=True)
