@@ -257,7 +257,7 @@ elif pagina == "🏆 Vitórias":
     st.dataframe(
         df[["POS","CLUBE","V","J"]],
         use_container_width=True,
-        hide_index=True
+        hide_index=False
     )
 
 elif pagina == "🛡️ Média de Gols Levados":
