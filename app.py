@@ -227,20 +227,12 @@ elif pagina == "🌎 Gols por País":
     st.dataframe(df[["POS","PAIS","GOLS"]], use_container_width=True, hide_index=True)
 
 elif pagina == "📊 Invencibilidade":
-
     df = inv.copy()
-
     df["INV"] = pd.to_numeric(df["INV"], errors="coerce").fillna(0)
     df["VIT"] = pd.to_numeric(df["VIT"], errors="coerce").fillna(0)
     df["EMP"] = pd.to_numeric(df["EMP"], errors="coerce").fillna(0)
-
     df = ranking(df, ["INV", "VIT", "EMP"], [False, False, False])
-
-    st.dataframe(
-        df[["POS","CLUBE","INV","VIT","EMP"]],
-        use_container_width=True,
-        hide_index=True
-    )
+    st.dataframe(df[["POS","CLUBE","INV","VIT","EMP"]], use_container_width=True, hide_index=True)
 
 elif pagina == "🔥 Melhores Ataques":
     df = ranking(cla.copy(), ["GOLS"], [False])
@@ -252,13 +244,8 @@ elif pagina == "📈 Média de Gols":
     st.dataframe(df[["POS","CLUBE","MG","GOLS","J"]], use_container_width=True, hide_index=True)
 
 elif pagina == "🏆 Vitórias":
-    df = ranking(cla.copy(), ["V","J"], [False, True])
-
-    st.dataframe(
-        df[["POS","CLUBE","V","J"]],
-        use_container_width=True,
-        hide_index=True
-    )
+    df = ranking(cla.copy(), ["V"], [False])
+    st.dataframe(df[["POS","CLUBE","V","J"]], use_container_width=True, hide_index=True)
 
 elif pagina == "🛡️ Média de Gols Levados":
     df = ranking(cla.copy(), ["MD"], [True])
