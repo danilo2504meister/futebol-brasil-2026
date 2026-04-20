@@ -252,12 +252,12 @@ elif pagina == "📈 Média de Gols":
     st.dataframe(df[["POS","CLUBE","MG","GOLS","J"]], use_container_width=True, hide_index=True)
 
 elif pagina == "🏆 Vitórias":
-    df = ranking(cla.copy(), ["V","J"], [False, False])
+    df = ranking(cla.copy(), ["V","J"], [False, True])
 
     st.dataframe(
         df[["POS","CLUBE","V","J"]],
         use_container_width=True,
-        hide_index=False
+        hide_index=True
     )
 
 elif pagina == "🛡️ Média de Gols Levados":
