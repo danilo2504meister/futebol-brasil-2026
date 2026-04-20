@@ -192,14 +192,10 @@ if pagina == "🏠 Home":
 
     with col1:
         card("Artilheiro", f"{artilheiro['JOGADOR']} - {int(artilheiro['GOLS'])} gols", "🥇 Artilheiros", escudo=escudo_time(artilheiro["CLUBE"]))
-
         if artilheiro_ext is not None:
             card("Artilheiro Estrangeiro", f"{artilheiro_ext['JOGADOR']} - {int(artilheiro_ext['GOLS'])} gols", "🌍 Artilheiros Estrangeiros", escudo=escudo_time(artilheiro_ext["CLUBE"]))
-
         card("Melhor Ataque", f"{' | '.join(ataque['CLUBE'])} - {int(max_gols)} gols", "🔥 Melhores Ataques", escudo=escudo_time(ataque.iloc[0]["CLUBE"]))
-
         card("País estrangeiro com mais gols", f"{bandeira(top_pais['PAIS'])} {top_pais['PAIS']} - {int(top_pais['GOLS'])} gols", "🌎 Gols por País")
-
         card("Maior Invencibilidade Atual", f"{' | '.join(inv_home['CLUBE'])} - {int(max_inv)} jogos", "📊 Invencibilidade", escudo=escudo_time(inv_home.iloc[0]["CLUBE"]))
         card("Clube com Mais jogos", f"{' | '.join(jogos['CLUBE'])} - {int(max_j)} jogos", "📅 Jogos por equipe", escudo=escudo_time(jogos.iloc[0]["CLUBE"]))
 
@@ -235,7 +231,7 @@ elif pagina == "📊 Invencibilidade":
     st.dataframe(df[["POS","CLUBE","INV","VIT","EMP"]], use_container_width=True, hide_index=True)
 
 elif pagina == "🔥 Melhores Ataques":
-    df = ranking(cla.copy(), ["GOLS"], [False])
+    df = ranking(cla.copy(), ["GOLS","J"], [False, True])
     st.dataframe(df[["POS","CLUBE","GOLS","J"]], use_container_width=True, hide_index=True)
 
 elif pagina == "📈 Média de Gols":
@@ -244,7 +240,7 @@ elif pagina == "📈 Média de Gols":
     st.dataframe(df[["POS","CLUBE","MG","GOLS","J"]], use_container_width=True, hide_index=True)
 
 elif pagina == "🏆 Vitórias":
-    df = ranking(cla.copy(), ["V"], [False])
+    df = ranking(cla.copy(), ["V","J"], [False,True])
     st.dataframe(df[["POS","CLUBE","V","J"]], use_container_width=True, hide_index=True)
 
 elif pagina == "🛡️ Média de Gols Levados":
