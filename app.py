@@ -205,12 +205,54 @@ if pagina == "🏠 Home":
 # ========================
 # PÁGINAS AJUSTADAS
 # ========================
+
+
+elif pagina == "🥇 Artilheiros":
+    df = ranking(art.copy(), ["GOLS"], [False])
+    st.dataframe(df[["POS","JOGADOR","CLUBE","GOLS"]], use_container_width=True, hide_index=True)
+
+elif pagina == "🌍 Artilheiros Estrangeiros":
+    df = ranking(estrangeiros.copy(), ["GOLS"], [False])
+    st.dataframe(df[["POS","JOGADOR","CLUBE","GOLS","PAIS"]], use_container_width=True, hide_index=True)
+
+elif pagina == "🌎 Gols por País":
+    df = ranking(ranking_pais.copy(), ["GOLS"], [False])
+    st.dataframe(df[["POS","PAIS","GOLS"]], use_container_width=True, hide_index=True)
+
+elif pagina == "📊 Invencibilidade":
+    df = cla.copy()
+    df = df[df["INV"].notna()]
+    df = df[df["INV"] > 0]
+    df = ranking(df, ["INV"], [False])
+    st.dataframe(df[["POS","CLUBE","INV"]], use_container_width=True, hide_index=True)
+
+elif pagina == "🔥 Melhores Ataques":
+    df = ranking(cla.copy(), ["GOL"], [False])
+    st.dataframe(df[["POS","CLUBE","GOL","J"]], use_container_width=True, hide_index=True)
+
 elif pagina == "📈 Média de Gols":
     df = ranking(cla.copy(), ["MG"], [False])
     df["MG"] = df["MG"].map("{:.2f}".format)
     st.dataframe(df[["POS","CLUBE","MG","GOLS","J"]], use_container_width=True, hide_index=True)
 
+elif pagina == "🏆 Vitórias":
+    df = ranking(cla.copy(), ["V"], [False])
+    st.dataframe(df[["POS","CLUBE","V","J"]], use_container_width=True, hide_index=True)
+
 elif pagina == "🛡️ Média de Gols Levados":
     df = ranking(cla.copy(), ["MD"], [True])
     df["MD"] = df["MD"].map("{:.2f}".format)
     st.dataframe(df[["POS","CLUBE","MD","GL","J"]], use_container_width=True, hide_index=True)
+
+elif pagina == "📊 Aproveitamento":
+    df = ranking(cla.copy(), ["AP","J"], [False, False])
+    st.dataframe(df[["POS","CLUBE","AP","J"]], use_container_width=True, hide_index=True)
+
+elif pagina == "🚫 Clean Sheets":
+    coluna = "CL_SH" if "CL_SH" in cla.columns else "CL SH"
+    df = ranking(cla.copy(), [coluna], [False])
+    st.dataframe(df[["POS","CLUBE",coluna,"J"]], use_container_width=True, hide_index=True)
+
+elif pagina == "📅 Jogos por equipe":
+    df = ranking(cla.copy(), ["J"], [False])
+    st.dataframe(df[["POS","CLUBE","J"]], use_container_width=True, hide_index=True)
