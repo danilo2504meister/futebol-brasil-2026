@@ -224,8 +224,8 @@ elif pagina == "📊 Invencibilidade":
     st.dataframe(df[["POS","CLUBE","INV","VIT","EMP"]], use_container_width=True, hide_index=True)
 
 elif pagina == "🔥 Melhores Ataques":
-    df = ranking(cla.copy(), ["GOL"], [False])
-    st.dataframe(df[["POS","CLUBE","GOL","J"]], use_container_width=True, hide_index=True)
+    df = ranking(cla.copy(), ["GOLS"], [False])
+    st.dataframe(df[["POS","CLUBE","GOLS","J"]], use_container_width=True, hide_index=True)
 
 elif pagina == "📈 Média de Gols":
     df = ranking(cla.copy(), ["MG"], [False])
