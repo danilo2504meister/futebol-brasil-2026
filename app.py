@@ -136,7 +136,7 @@ ranking_pais = (
     .sort_values(by="GOLS", ascending=False)
 )
 
-DATA_ATUALIZACAO = "22/04/2026"
+DATA_ATUALIZACAO = "23/04/2026"
 
 # ========================
 # MENU
