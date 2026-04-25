@@ -19,16 +19,6 @@ body { background-color: #0e1117; color: white; }
     border: 1px solid #2a2f3a;
 }
 
-.card:hover { border: 1px solid #555; }
-
-div.stButton > button {
-    width: 100%;
-    border-radius: 8px;
-    border: 1px solid #3a3f4b;
-    background-color: #1f2430;
-    color: white;
-    padding: 8px;
-}
 </style>
 """, unsafe_allow_html=True)
 
@@ -136,7 +126,7 @@ ranking_pais = (
     .sort_values(by="GOLS", ascending=False)
 )
 
-DATA_ATUALIZACAO = "23/04/2026"
+DATA_ATUALIZACAO = "24/04/2026"
 
 # ========================
 # MENU
