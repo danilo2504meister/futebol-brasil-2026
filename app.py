@@ -126,7 +126,7 @@ ranking_pais = (
     .sort_values(by="GOLS", ascending=False)
 )
 
-DATA_ATUALIZACAO = "24/04/2026"
+DATA_ATUALIZACAO = "25/04/2026"
 
 # ========================
 # MENU
@@ -185,7 +185,7 @@ if pagina == "🏠 Home":
         if artilheiro_ext is not None:
             card("Artilheiro Estrangeiro", f"{artilheiro_ext['JOGADOR']} - {int(artilheiro_ext['GOLS'])} gols", "🌍 Artilheiros Estrangeiros", escudo=escudo_time(artilheiro_ext["CLUBE"]))
         card("Melhor Ataque", f"{' | '.join(ataque['CLUBE'])} - {int(max_gols)} gols", "🔥 Melhores Ataques", escudo=escudo_time(ataque.iloc[0]["CLUBE"]))
-        card("País estrangeiro com mais gols", f"{bandeira(top_pais['PAIS'])} {top_pais['PAIS']} - {int(top_pais['GOLS'])} gols", "🌎 Gols por País")
+        card("País estrangeiro com mais gols", f"{bandeira(top_pais['PAIS'])} {top_pais['PAIS']} - {int(top_pais['GOLS'])} gols", "🌎")
         card("Maior Invencibilidade Atual", f"{' | '.join(inv_home['CLUBE'])} - {int(max_inv)} jogos", "📊 Invencibilidade", escudo=escudo_time(inv_home.iloc[0]["CLUBE"]))
         card("Clube com Mais jogos", f"{' | '.join(jogos['CLUBE'])} - {int(max_j)} jogos", "📅 Jogos por equipe", escudo=escudo_time(jogos.iloc[0]["CLUBE"]))
 
