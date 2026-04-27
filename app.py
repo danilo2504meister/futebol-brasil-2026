@@ -256,7 +256,7 @@ elif pagina == "🛡️ Média de Gols Levados":
     df = cla.copy()
     df = df[df["J"] > 0]
     df = df.sort_values(by=["MD", "J"], ascending=[True, True]).reset_index(drop=True)
-    df["POS"] = df[["MD", "J"]].apply(tuple, axis=1).rank(method="min", ascending=True).astype(int)
+    df["POS"] = df.apply(lambda x: (x["MD"], -x["J"]), axis=1).rank(method="min").astype(int)
     df = df.sort_values(by="POS")
     df["POS"] = df["POS"].apply(ordinal)
     df["MD"] = df["MD"].map("{:.2f}".format)
