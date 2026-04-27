@@ -227,41 +227,25 @@ elif pagina == "🌎 Gols por País":
     st.dataframe(df[["POS","PAIS","GOLS"]], use_container_width=True, hide_index=True)
 
 elif pagina == "📊 Invencibilidade":
-
     df = inv.copy()
-
     df["INV"] = pd.to_numeric(df["INV"], errors="coerce").fillna(0)
     df["VIT"] = pd.to_numeric(df["VIT"], errors="coerce").fillna(0)
     df["EMP"] = pd.to_numeric(df["EMP"], errors="coerce").fillna(0)
-
     df = ranking(df, ["INV", "VIT", "EMP"], [False, False, False])
-
-    st.dataframe(
-        df[["POS","CLUBE","INV","VIT","EMP"]],
-        use_container_width=True,
-        hide_index=True
-    )
+    st.dataframe(df[["POS","CLUBE","INV","VIT","EMP"]], use_container_width=True, hide_index=True)
+    
 elif pagina == "🔥 Melhores Ataques":
     df = ranking(cla.copy(), ["GOLS"], [False])
     st.dataframe(df[["POS","CLUBE","GOLS","J"]], use_container_width=True, hide_index=True)
 
 elif pagina == "📈 Média de Gols":
-
     df = cla.copy()
-
-    # ❌ remove quem não jogou
     df = df[df["J"] > 0]
-
-    # ✅ ordenação correta: MG desc, J desc
-    df = df.sort_values(by=["MG", "J"], ascending=[False, False]).reset_index(drop=True)
-
-    # ✅ ranking com empate real
+    df = df.sort_values(by=["MG", "J"], ascending=[False, True]).reset_index(drop=True)
     df["POS"] = df[["MG", "J"]].apply(tuple, axis=1).rank(method="min", ascending=False).astype(int)
     df = df.sort_values(by="POS")
-
     df["POS"] = df["POS"].apply(ordinal)
     df["MG"] = df["MG"].map("{:.2f}".format)
-
     st.dataframe(df[["POS","CLUBE","MG","GOLS","J"]], use_container_width=True, hide_index=True)
 
 elif pagina == "🏆 Vitórias":
