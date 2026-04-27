@@ -253,22 +253,13 @@ elif pagina == "🏆 Vitórias":
     st.dataframe(df[["POS","CLUBE","V","J"]], use_container_width=True, hide_index=True)
 
 elif pagina == "🛡️ Média de Gols Levados":
-
     df = cla.copy()
-
-    # ❌ remove quem não jogou
     df = df[df["J"] > 0]
-
-    # ✅ ordenação correta: MD crescente, J decrescente
-    df = df.sort_values(by=["MD", "J"], ascending=[True, False]).reset_index(drop=True)
-
-    # ✅ ranking correto (com empate real)
+    df = df.sort_values(by=["MD", "J"], ascending=[True, True]).reset_index(drop=True)
     df["POS"] = df[["MD", "J"]].apply(tuple, axis=1).rank(method="min", ascending=True).astype(int)
     df = df.sort_values(by="POS")
-
     df["POS"] = df["POS"].apply(ordinal)
     df["MD"] = df["MD"].map("{:.2f}".format)
-
     st.dataframe(df[["POS","CLUBE","MD","GL","J"]], use_container_width=True, hide_index=True)
 
 elif pagina == "📊 Aproveitamento":
