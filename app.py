@@ -136,7 +136,7 @@ ranking_pais = (
     .sort_values(by="GOLS", ascending=False)
 )
 
-DATA_ATUALIZACAO = "25/04/2026"
+DATA_ATUALIZACAO = "26/04/2026"
 
 # ========================
 # MENU
@@ -242,7 +242,7 @@ elif pagina == "📊 Invencibilidade":
         hide_index=True
     )
 elif pagina == "🔥 Melhores Ataques":
-    df = ranking(cla.copy(), ["GOL"], [False])
+    df = ranking(cla.copy(), ["GOLS"], [False])
     st.dataframe(df[["POS","CLUBE","GOLS","J"]], use_container_width=True, hide_index=True)
 
 elif pagina == "📈 Média de Gols":
@@ -260,7 +260,7 @@ elif pagina == "🛡️ Média de Gols Levados":
     st.dataframe(df[["POS","CLUBE","MD","GL","J"]], use_container_width=True, hide_index=True)
 
 elif pagina == "📊 Aproveitamento":
-    df = ranking(cla.copy(), ["AP","J"], [False, False])
+    df = ranking(cla.copy(), ["APROVEITAMENTO","J"], [False, False])
     st.dataframe(df[["POS","CLUBE","APROVEITAMENTO","J"]], use_container_width=True, hide_index=True)
 
 elif pagina == "🚫 Clean Sheets":
