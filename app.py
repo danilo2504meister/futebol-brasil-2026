@@ -68,7 +68,7 @@ def ranking(df, colunas, asc):
     df["POS"] = df["POS"].apply(ordinal)
     return df
 
-def card(titulo, conteudo, pagina_destino, icone="", escudo=None):
+def card(titulo, conteudo, icone="", escudo=None):
     with st.container():
         st.markdown('<div class="card">', unsafe_allow_html=True)
 
@@ -79,20 +79,10 @@ def card(titulo, conteudo, pagina_destino, icone="", escudo=None):
                 st.image(escudo, width=50)
 
         with col2:
-            st.markdown(f"**{icone} {titulo}**")
+            st.markdown(f"## {icone} {titulo}")
             st.markdown(f"### {conteudo}")
 
-        if st.button(pagina_destino, key=f"{titulo}_{pagina_destino}"):
-            st.session_state["pagina"] = pagina_destino
-
         st.markdown('</div>', unsafe_allow_html=True)
-
-def ranking(df, colunas, asc):
-    df = df.sort_values(by=colunas, ascending=asc).reset_index(drop=True)
-    df["POS"] = df[colunas].apply(tuple, axis=1).rank(method="min", ascending=asc[0]).astype(int)
-    df = df.sort_values(by="POS")
-    df["POS"] = df["POS"].apply(ordinal)
-    return df
 
 # ========================
 # DADOS
@@ -191,23 +181,22 @@ if pagina == "🏠 Home":
     col1, col2 = st.columns(2)
 
     with col1:
-        card("Artilheiro", f"{artilheiro['JOGADOR']} - {int(artilheiro['GOLS'])} gols", "🥇 Artilheiros", escudo=escudo_time(artilheiro["CLUBE"]))
-
+       card("Artilheiro", f"{artilheiro['JOGADOR']} - {int(artilheiro['GOLS'])} gols", "🥇", escudo=escudo_time(artilheiro["CLUBE"]))
         if artilheiro_ext is not None:
-            card("Artilheiro Estrangeiro", f"{artilheiro_ext['JOGADOR']} - {int(artilheiro_ext['GOLS'])} gols", "🌍 Artilheiros Estrangeiros", escudo=escudo_time(artilheiro_ext["CLUBE"]))
+            card("Artilheiro Estrangeiro", f"{artilheiro_ext['JOGADOR']} - {int(artilheiro_ext['GOLS'])} gols", "🌍", escudo=escudo_time(artilheiro_ext["CLUBE"]))
 
-        card("Melhor Ataque", f"{' | '.join(ataque['CLUBE'])} - {int(max_gols)} gols", "🔥 Melhores Ataques", escudo=escudo_time(ataque.iloc[0]["CLUBE"]))
+        card("Melhor Ataque", f"{' | '.join(ataque['CLUBE'])} - {int(max_gols)} gols", "🔥", escudo=escudo_time(ataque.iloc[0]["CLUBE"]))
 
-        card("País estrangeiro com mais gols", f"{bandeira(top_pais['PAIS'])} {top_pais['PAIS']} - {int(top_pais['GOLS'])} gols", "🌎 Gols por País")
+        card("País estrangeiro com mais gols", f"{bandeira(top_pais['PAIS'])} {top_pais['PAIS']} - {int(top_pais['GOLS'])} gols", "🌎")
 
-        card("Maior Invencibilidade Atual", f"{' | '.join(inv_home['CLUBE'])} - {int(max_inv)} jogos", "📊 Invencibilidade", escudo=escudo_time(inv_home.iloc[0]["CLUBE"]))
-        card("Clube com Mais jogos", f"{' | '.join(jogos['CLUBE'])} - {int(max_j)} jogos", "📅 Jogos por equipe", escudo=escudo_time(jogos.iloc[0]["CLUBE"]))
+        card("Maior Invencibilidade Atual", f"{' | '.join(inv_home['CLUBE'])} - {int(max_inv)} jogos", "📊", escudo=escudo_time(inv_home.iloc[0]["CLUBE"]))
+        card("Clube com Mais jogos", f"{' | '.join(jogos['CLUBE'])} - {int(max_j)} jogos", "📅", escudo=escudo_time(jogos.iloc[0]["CLUBE"]))
 
     with col2:
-        card("Maior Média de gols por jogo", f"{' | '.join(mg['CLUBE'])} - {mg.iloc[0]['MG']:.2f} gols/jogo", "📈 Média de Gols", escudo=escudo_time(mg.iloc[0]["CLUBE"]))
-        card("Mais Vitórias", f"{' | '.join(vit['CLUBE'])} - {int(max_v)} vitórias", "🏆 Vitórias", escudo=escudo_time(vit.iloc[0]["CLUBE"]))
-        card("Menor Média de Gols Levados", f"{md.iloc[0]['CLUBE']} - {md.iloc[0]['MD']:.2f} gols/jogo", "🛡️ Média de Gols Levados", escudo=escudo_time(md.iloc[0]["CLUBE"]))
-        card("Melhor Aproveitamento de Pontos", f"{apr.iloc[0]['CLUBE']} - {apr.iloc[0]['APROVEITAMENTO']}%", "📊 Aproveitamento", escudo=escudo_time(apr.iloc[0]["CLUBE"]))
+        card("Maior Média de gols por jogo", f"{' | '.join(mg['CLUBE'])} - {mg.iloc[0]['MG']:.2f} gols/jogo", "📈", escudo=escudo_time(mg.iloc[0]["CLUBE"]))
+        card("Mais Vitórias", f"{' | '.join(vit['CLUBE'])} - {int(max_v)} vitórias", "🏆", escudo=escudo_time(vit.iloc[0]["CLUBE"]))
+        card("Menor Média de Gols Levados", f"{md.iloc[0]['CLUBE']} - {md.iloc[0]['MD']:.2f} gols/jogo", "🛡️", escudo=escudo_time(md.iloc[0]["CLUBE"]))
+        card("Melhor Aproveitamento de Pontos", f"{apr.iloc[0]['CLUBE']} - {apr.iloc[0]['APROVEITAMENTO']}%", "📊", escudo=escudo_time(apr.iloc[0]["CLUBE"]))
 
 # ========================
 # PÁGINAS AJUSTADAS
@@ -235,8 +224,11 @@ elif pagina == "📊 Invencibilidade":
     st.dataframe(df[["POS","CLUBE","INV","VIT","EMP"]], use_container_width=True, hide_index=True)
     
 elif pagina == "🔥 Melhores Ataques":
-    df = ranking(cla.copy(), ["GOLS"], [False])
-    st.dataframe(df[["POS","CLUBE","GOLS","J"]], use_container_width=True, hide_index=True)
+    df = cla.copy()
+    df = df.sort_values(by=["GOLS", "J"], ascending=[False, True]).reset_index(drop=True)
+    df["POS"] = df[["GOLS", "J"]].apply(tuple, axis=1).rank(method="min", ascending=False).astype(int)
+    df = df.sort_values(by="POS")
+    df["POS"] = df["POS"].apply(ordinal)
 
 elif pagina == "📈 Média de Gols":
     df = cla.copy()
@@ -249,9 +241,12 @@ elif pagina == "📈 Média de Gols":
     st.dataframe(df[["POS","CLUBE","MG","GOLS","J"]], use_container_width=True, hide_index=True)
 
 elif pagina == "🏆 Vitórias":
-    df = ranking(cla.copy(), ["V"], [False])
-    st.dataframe(df[["POS","CLUBE","V","J"]], use_container_width=True, hide_index=True)
-
+    df = cla.copy()
+    df = df.sort_values(by=["V", "J"], ascending=[False, True]).reset_index(drop=True)
+    df["POS"] = df[["V", "J"]].apply(tuple, axis=1).rank(method="min", ascending=False).astype(int)
+    df = df.sort_values(by="POS")
+    df["POS"] = df["POS"].apply(ordinal)
+    
 elif pagina == "🛡️ Média de Gols Levados":
     df = cla.copy()
     df = df[df["J"] > 0]
@@ -268,8 +263,11 @@ elif pagina == "📊 Aproveitamento":
 
 elif pagina == "🚫 Clean Sheets":
     coluna = "CL_SH" if "CL_SH" in cla.columns else "CL SH"
-    df = ranking(cla.copy(), [coluna], [False])
-    st.dataframe(df[["POS","CLUBE",coluna,"J"]], use_container_width=True, hide_index=True)
+    df = cla.copy()
+    df = df.sort_values(by=[coluna, "J"], ascending=[False, True]).reset_index(drop=True)
+    df["POS"] = df[[coluna, "J"]].apply(tuple, axis=1).rank(method="min", ascending=False).astype(int)
+    df = df.sort_values(by="POS")
+    df["POS"] = df["POS"].apply(ordinal)
 
 elif pagina == "📅 Jogos por equipe":
     df = ranking(cla.copy(), ["J"], [False])
