@@ -158,8 +158,57 @@ st.caption(f"Atualizado até: {DATA_ATUALIZACAO}")
 # HOME
 # ========================
 if pagina == "🏠 Home":
-    # (seu código da home mantido exatamente igual)
-    pass
+
+    artilheiro = art.sort_values(by=["GOLS","JOGADOR"], ascending=[False, True]).iloc[0]
+
+    artilheiro_ext = estrangeiros.sort_values(
+        by=["GOLS","JOGADOR"], ascending=[False, True]
+    ).iloc[0] if not estrangeiros.empty else None
+
+    top_pais = ranking_pais.iloc[0] if not ranking_pais.empty else pd.Series({"PAIS": "-", "GOLS": 0})
+
+    max_inv = inv["INV"].max()
+    inv_home = inv[inv["INV"] == max_inv]
+
+    max_v = cla["V"].max()
+    vit = cla[cla["V"] == max_v]
+
+    max_mg = cla["MG"].max()
+    mg = cla[cla["MG"] == max_mg]
+
+    max_gols = cla["GOLS"].max()
+    ataque = cla[cla["GOLS"] == max_gols]
+
+    md = cla.sort_values(by=["MD","J"], ascending=[True, False]).head(1)
+    apr = cla.sort_values(by=["APROVEITAMENTO","J"], ascending=[False, False]).head(1)
+
+    max_j = cla["J"].max()
+    jogos = cla[cla["J"] == max_j]
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        card("Artilheiro", f"{artilheiro['JOGADOR']} - {int(artilheiro['GOLS'])} gols", "🥇", escudo_time(artilheiro["CLUBE"]))
+
+        if artilheiro_ext is not None:
+            card("Artilheiro Estrangeiro", f"{artilheiro_ext['JOGADOR']} - {int(artilheiro_ext['GOLS'])} gols", "🌍", escudo_time(artilheiro_ext["CLUBE"]))
+
+        card("Melhor Ataque", f"{' | '.join(ataque['CLUBE'])} - {int(max_gols)} gols", "🔥", escudo_time(ataque.iloc[0]["CLUBE"]))
+
+        card("País com mais gols", f"{bandeira(top_pais['PAIS'])} {top_pais['PAIS']} - {int(top_pais['GOLS'])} gols", "🌎")
+
+        card("Invencibilidade", f"{' | '.join(inv_home['CLUBE'])} - {int(max_inv)} jogos", "📊", escudo_time(inv_home.iloc[0]["CLUBE"]))
+
+    with col2:
+        card("Média de gols", f"{' | '.join(mg['CLUBE'])} - {mg.iloc[0]['MG']:.2f}", "📈", escudo_time(mg.iloc[0]["CLUBE"]))
+
+        card("Vitórias", f"{' | '.join(vit['CLUBE'])} - {int(max_v)}", "🏆", escudo_time(vit.iloc[0]["CLUBE"]))
+
+        card("Defesa", f"{md.iloc[0]['CLUBE']} - {md.iloc[0]['MD']:.2f}", "🛡️", escudo_time(md.iloc[0]["CLUBE"]))
+
+        card("Aproveitamento", f"{apr.iloc[0]['CLUBE']} - {apr.iloc[0]['APROVEITAMENTO']}%", "📊", escudo_time(apr.iloc[0]["CLUBE"]))
+
+        card("Mais jogos", f"{' | '.join(jogos['CLUBE'])} - {int(max_j)} jogos", "📅", escudo_time(jogos.iloc[0]["CLUBE"]))
 
 elif pagina == "🥇 Artilheiros":
     df = ranking(art.copy(), ["GOLS"], [False])
