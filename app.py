@@ -180,7 +180,7 @@ if pagina == "🏠 Home":
 
     col1, col2 = st.columns(2)
 
-   with col1:
+    with col1:
     card("Artilheiro", f"{artilheiro['JOGADOR']} - {int(artilheiro['GOLS'])} gols", "🥇", escudo=escudo_time(artilheiro["CLUBE"]))
     if artilheiro_ext is not None:
         card("Artilheiro Estrangeiro", f"{artilheiro_ext['JOGADOR']} - {int(artilheiro_ext['GOLS'])} gols", "🌍", escudo=escudo_time(artilheiro_ext["CLUBE"]))
@@ -190,10 +190,10 @@ if pagina == "🏠 Home":
     card("Clube com Mais jogos", f"{' | '.join(jogos['CLUBE'])} - {int(max_j)} jogos", "📅", escudo=escudo_time(jogos.iloc[0]["CLUBE"]))
        
     with col2:
-        card("Maior Média de gols por jogo", f"{' | '.join(mg['CLUBE'])} - {mg.iloc[0]['MG']:.2f} gols/jogo", "📈", escudo=escudo_time(mg.iloc[0]["CLUBE"]))
-        card("Mais Vitórias", f"{' | '.join(vit['CLUBE'])} - {int(max_v)} vitórias", "🏆", escudo=escudo_time(vit.iloc[0]["CLUBE"]))
-        card("Menor Média de Gols Levados", f"{md.iloc[0]['CLUBE']} - {md.iloc[0]['MD']:.2f} gols/jogo", "🛡️", escudo=escudo_time(md.iloc[0]["CLUBE"]))
-        card("Melhor Aproveitamento de Pontos", f"{apr.iloc[0]['CLUBE']} - {apr.iloc[0]['APROVEITAMENTO']}%", "📊", escudo=escudo_time(apr.iloc[0]["CLUBE"]))
+    card("Maior Média de gols por jogo", f"{' | '.join(mg['CLUBE'])} - {mg.iloc[0]['MG']:.2f} gols/jogo", "📈", escudo=escudo_time(mg.iloc[0]["CLUBE"]))
+    card("Mais Vitórias", f"{' | '.join(vit['CLUBE'])} - {int(max_v)} vitórias", "🏆", escudo=escudo_time(vit.iloc[0]["CLUBE"]))
+    card("Menor Média de Gols Levados", f"{md.iloc[0]['CLUBE']} - {md.iloc[0]['MD']:.2f} gols/jogo", "🛡️", escudo=escudo_time(md.iloc[0]["CLUBE"]))
+    card("Melhor Aproveitamento de Pontos", f"{apr.iloc[0]['CLUBE']} - {apr.iloc[0]['APROVEITAMENTO']}%", "📊", escudo=escudo_time(apr.iloc[0]["CLUBE"]))
 
 # ========================
 # PÁGINAS AJUSTADAS
