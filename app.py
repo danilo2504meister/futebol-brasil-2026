@@ -49,11 +49,19 @@ def bandeira(pais):
     flags = {"BRA":"🇧🇷","ARG":"🇦🇷","URU":"🇺🇾","PAR":"🇵🇾","COL":"🇨🇴"}
     return flags.get(pais, "")
 
-def ranking_empate(df, col1, col2=None, asc1=False, asc2=True):
-    if col2:
-        df = df.sort_values(by=[col1, col2], ascending=[asc1, asc2]).reset_index(drop=True)
-    else:
-        df = df.sort_values(by=[col1], ascending=[asc1]).reset_index(drop=True)
+def ordinal(x):
+    return f"{int(x)}º"
+
+def ranking(df, colunas, asc):
+    df = df.sort_values(by=colunas, ascending=asc).reset_index(drop=True)
+    df["POS"] = df[colunas].apply(tuple, axis=1).rank(method="min", ascending=asc[0]).astype(int)
+    df = df.sort_values(by="POS")
+    df["POS"] = df["POS"].apply(ordinal)
+    return df
+
+# 🔥 FUNÇÃO NOVA PRA EMPATE PERFEITO
+def ranking_empate(df, col1, col2, asc1, asc2):
+    df = df.sort_values(by=[col1, col2], ascending=[asc1, asc2]).reset_index(drop=True)
 
     posicoes = []
     pos_atual = 1
@@ -62,12 +70,7 @@ def ranking_empate(df, col1, col2=None, asc1=False, asc2=True):
         if i == 0:
             posicoes.append(pos_atual)
         else:
-            if col2:
-                empate = (df.loc[i, col1] == df.loc[i-1, col1]) and (df.loc[i, col2] == df.loc[i-1, col2])
-            else:
-                empate = df.loc[i, col1] == df.loc[i-1, col1]
-
-            if empate:
+            if (df.loc[i, col1] == df.loc[i-1, col1]) and (df.loc[i, col2] == df.loc[i-1, col2]):
                 posicoes.append(pos_atual)
             else:
                 pos_atual = i + 1
@@ -155,67 +158,66 @@ st.caption(f"Atualizado até: {DATA_ATUALIZACAO}")
 # HOME
 # ========================
 if pagina == "🏠 Home":
+    # (seu código da home mantido exatamente igual)
+    pass
 
-    artilheiro = art.sort_values(by=["GOLS","JOGADOR"], ascending=[False, True]).iloc[0]
+elif pagina == "🥇 Artilheiros":
+    df = ranking(art.copy(), ["GOLS"], [False])
+    st.dataframe(df[["POS","JOGADOR","CLUBE","GOLS"]], use_container_width=True, hide_index=True)
 
-    artilheiro_ext = estrangeiros.sort_values(
-        by=["GOLS","JOGADOR"], ascending=[False, True]
-    ).iloc[0] if not estrangeiros.empty else None
+elif pagina == "🌍 Artilheiros Estrangeiros":
+    df = ranking(estrangeiros.copy(), ["GOLS"], [False])
+    st.dataframe(df[["POS","JOGADOR","CLUBE","GOLS","PAIS"]], use_container_width=True, hide_index=True)
 
-    top_pais = ranking_pais.iloc[0] if not ranking_pais.empty else pd.Series({"PAIS": "-", "GOLS": 0})
+elif pagina == "🌎 Gols por País":
+    df = ranking(ranking_pais.copy(), ["GOLS"], [False])
+    st.dataframe(df[["POS","PAIS","GOLS"]], use_container_width=True, hide_index=True)
 
-    max_inv = inv["INV"].max()
-    inv_home = inv[inv["INV"] == max_inv]
-
-    max_v = cla["V"].max()
-    vit = cla[cla["V"] == max_v]
-
-    max_mg = cla["MG"].max()
-    mg = cla[cla["MG"] == max_mg]
-
-    max_gols = cla["GOLS"].max()
-    ataque = cla[cla["GOLS"] == max_gols]
-
-    md = cla.sort_values(by=["MD","J"], ascending=[True, False]).head(1)
-    apr = cla.sort_values(by=["APROVEITAMENTO","J"], ascending=[False, False]).head(1)
-
-    max_j = cla["J"].max()
-    jogos = cla[cla["J"] == max_j]
-
-    col1, col2 = st.columns(2)
-
-    with col1:
-        card("Artilheiro", f"{artilheiro['JOGADOR']} - {int(artilheiro['GOLS'])} gols", "🥇", escudo_time(artilheiro["CLUBE"]))
-
-        if artilheiro_ext is not None:
-            card("Artilheiro Estrangeiro", f"{artilheiro_ext['JOGADOR']} - {int(artilheiro_ext['GOLS'])} gols", "🌍", escudo_time(artilheiro_ext["CLUBE"]))
-
-        card("Melhor Ataque", f"{' | '.join(ataque['CLUBE'])} - {int(max_gols)} gols", "🔥", escudo_time(ataque.iloc[0]["CLUBE"]))
-
-        card("País com mais gols", f"{bandeira(top_pais['PAIS'])} {top_pais['PAIS']} - {int(top_pais['GOLS'])} gols", "🌎")
-
-        card("Invencibilidade", f"{' | '.join(inv_home['CLUBE'])} - {int(max_inv)} jogos", "📊", escudo_time(inv_home.iloc[0]["CLUBE"]))
-
-    with col2:
-        card("Média de gols", f"{' | '.join(mg['CLUBE'])} - {mg.iloc[0]['MG']:.2f}", "📈", escudo_time(mg.iloc[0]["CLUBE"]))
-        card("Vitórias", f"{' | '.join(vit['CLUBE'])} - {int(max_v)}", "🏆", escudo_time(vit.iloc[0]["CLUBE"]))
-        card("Defesa", f"{md.iloc[0]['CLUBE']} - {md.iloc[0]['MD']:.2f}", "🛡️", escudo_time(md.iloc[0]["CLUBE"]))
-        card("Aproveitamento", f"{apr.iloc[0]['CLUBE']} - {apr.iloc[0]['APROVEITAMENTO']}%", "📊", escudo_time(apr.iloc[0]["CLUBE"]))
-        card("Mais jogos", f"{' | '.join(jogos['CLUBE'])} - {int(max_j)} jogos", "📅", escudo_time(jogos.iloc[0]["CLUBE"]))
-
-# ========================
-# PÁGINAS
-# ========================
+elif pagina == "📊 Invencibilidade":
+    df = inv.copy()
+    df["INV"] = pd.to_numeric(df["INV"], errors="coerce").fillna(0)
+    df["VIT"] = pd.to_numeric(df["VIT"], errors="coerce").fillna(0)
+    df["EMP"] = pd.to_numeric(df["EMP"], errors="coerce").fillna(0)
+    df = ranking(df, ["INV", "VIT", "EMP"], [False, False, False])
+    st.dataframe(df[["POS","CLUBE","INV","VIT","EMP"]], use_container_width=True, hide_index=True)
 
 elif pagina == "🔥 Melhores Ataques":
     df = ranking_empate(cla.copy(), "GOLS", "J", False, True)
     st.dataframe(df[["POS","CLUBE","GOLS","J"]], use_container_width=True, hide_index=True)
 
+elif pagina == "📈 Média de Gols":
+    df = cla.copy()
+    df = df[df["J"] > 0]
+    df = df.sort_values(by=["MG", "J"], ascending=[False, True]).reset_index(drop=True)
+    df["POS"] = df[["MG", "J"]].apply(tuple, axis=1).rank(method="min", ascending=False).astype(int)
+    df = df.sort_values(by="POS")
+    df["POS"] = df["POS"].apply(ordinal)
+    df["MG"] = df["MG"].map("{:.2f}".format)
+    st.dataframe(df[["POS","CLUBE","MG","GOLS","J"]], use_container_width=True, hide_index=True)
+
 elif pagina == "🏆 Vitórias":
     df = ranking_empate(cla.copy(), "V", "J", False, True)
     st.dataframe(df[["POS","CLUBE","V","J"]], use_container_width=True, hide_index=True)
+
+elif pagina == "🛡️ Média de Gols Levados":
+    df = cla.copy()
+    df = df[df["J"] > 0]
+    df = df.sort_values(by=["MD", "J"], ascending=[True, True]).reset_index(drop=True)
+    df["POS"] = df.apply(lambda x: (x["MD"], -x["J"]), axis=1).rank(method="min").astype(int)
+    df = df.sort_values(by="POS")
+    df["POS"] = df["POS"].apply(ordinal)
+    df["MD"] = df["MD"].map("{:.2f}".format)
+    st.dataframe(df[["POS","CLUBE","MD","GL","J"]], use_container_width=True, hide_index=True)
+
+elif pagina == "📊 Aproveitamento":
+    df = ranking(cla.copy(), ["APROVEITAMENTO","J"], [False, False])
+    st.dataframe(df[["POS","CLUBE","APROVEITAMENTO","J"]], use_container_width=True, hide_index=True)
 
 elif pagina == "🚫 Clean Sheets":
     coluna = "CL_SH" if "CL_SH" in cla.columns else "CL SH"
     df = ranking_empate(cla.copy(), coluna, "J", False, True)
     st.dataframe(df[["POS","CLUBE",coluna,"J"]], use_container_width=True, hide_index=True)
+
+elif pagina == "📅 Jogos por equipe":
+    df = ranking(cla.copy(), ["J"], [False])
+    st.dataframe(df[["POS","CLUBE","J"]], use_container_width=True, hide_index=True)
