@@ -225,20 +225,22 @@ elif pagina == "📊 Invencibilidade":
     df = ranking(df, ["INV", "VIT", "EMP"], [False, False, False])
     st.dataframe(df[["POS","CLUBE","INV","VIT","EMP"]], use_container_width=True, hide_index=True)
     
-elif pagina == "🔥 Melhores Ataques":
-    df = cla.copy()
-    df = df.sort_values(by=["GOLS", "J"], ascending=[False, True]).reset_index(drop=True)
+df = df.sort_values(by=["GOLS", "J"], ascending=[False, True]).reset_index(drop=True)
 
-    df["POS"] = (
-        df[["GOLS", "J"]]
-        .apply(tuple, axis=1)
-        .rank(method="min", ascending=False)
-        .astype(int)
-    )
+posicoes = []
+pos_atual = 1
 
-    df["POS"] = df["POS"].astype(str) + "º"
+for i in range(len(df)):
+    if i == 0:
+        posicoes.append(pos_atual)
+    else:
+        if (df.loc[i, "GOLS"] == df.loc[i-1, "GOLS"]) and (df.loc[i, "J"] == df.loc[i-1, "J"]):
+            posicoes.append(pos_atual)
+        else:
+            pos_atual = i + 1
+            posicoes.append(pos_atual)
 
-    st.dataframe(df[["POS","CLUBE","GOLS","J"]], use_container_width=True, hide_index=True)
+df["POS"] = [f"{p}º" for p in posicoes]
 
 elif pagina == "📈 Média de Gols":
     df = cla.copy()
@@ -250,20 +252,22 @@ elif pagina == "📈 Média de Gols":
     df["MG"] = df["MG"].map("{:.2f}".format)
     st.dataframe(df[["POS","CLUBE","MG","GOLS","J"]], use_container_width=True, hide_index=True)
 
-elif pagina == "🏆 Vitórias":
-    df = cla.copy()
-    df = df.sort_values(by=["V", "J"], ascending=[False, True]).reset_index(drop=True)
+df = df.sort_values(by=["V", "J"], ascending=[False, True]).reset_index(drop=True)
 
-    df["POS"] = (
-        df[["V", "J"]]
-        .apply(tuple, axis=1)
-        .rank(method="min", ascending=False)
-        .astype(int)
-    )
+posicoes = []
+pos_atual = 1
 
-    df["POS"] = df["POS"].astype(str) + "º"
+for i in range(len(df)):
+    if i == 0:
+        posicoes.append(pos_atual)
+    else:
+        if (df.loc[i, "V"] == df.loc[i-1, "V"]) and (df.loc[i, "J"] == df.loc[i-1, "J"]):
+            posicoes.append(pos_atual)
+        else:
+            pos_atual = i + 1
+            posicoes.append(pos_atual)
 
-    st.dataframe(df[["POS","CLUBE","V","J"]], use_container_width=True, hide_index=True)
+df["POS"] = [f"{p}º" for p in posicoes]
     
 elif pagina == "🛡️ Média de Gols Levados":
     df = cla.copy()
@@ -282,16 +286,25 @@ elif pagina == "📊 Aproveitamento":
 elif pagina == "🚫 Clean Sheets":
     coluna = "CL_SH" if "CL_SH" in cla.columns else "CL SH"
     df = cla.copy()
+
+    # Ordenação correta
     df = df.sort_values(by=[coluna, "J"], ascending=[False, True]).reset_index(drop=True)
 
-    df["POS"] = (
-        df[[coluna, "J"]]
-        .apply(tuple, axis=1)
-        .rank(method="min", ascending=False)
-        .astype(int)
-    )
+    # Criar posição com empate correto
+    posicoes = []
+    pos_atual = 1
 
-    df["POS"] = df["POS"].astype(str) + "º"
+    for i in range(len(df)):
+        if i == 0:
+            posicoes.append(pos_atual)
+        else:
+            if (df.loc[i, coluna] == df.loc[i-1, coluna]) and (df.loc[i, "J"] == df.loc[i-1, "J"]):
+                posicoes.append(pos_atual)
+            else:
+                pos_atual = i + 1
+                posicoes.append(pos_atual)
+
+    df["POS"] = [f"{p}º" for p in posicoes]
 
     st.dataframe(df[["POS","CLUBE",coluna,"J"]], use_container_width=True, hide_index=True)
     
