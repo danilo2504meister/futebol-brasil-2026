@@ -182,7 +182,7 @@ if pagina == "🏠 Home":
 
     with col1:
        card("Artilheiro", f"{artilheiro['JOGADOR']} - {int(artilheiro['GOLS'])} gols", "🥇", escudo=escudo_time(artilheiro["CLUBE"]))
-        if artilheiro_ext is not None:
+       if artilheiro_ext is not None:
             card("Artilheiro Estrangeiro", f"{artilheiro_ext['JOGADOR']} - {int(artilheiro_ext['GOLS'])} gols", "🌍", escudo=escudo_time(artilheiro_ext["CLUBE"]))
 
         card("Melhor Ataque", f"{' | '.join(ataque['CLUBE'])} - {int(max_gols)} gols", "🔥", escudo=escudo_time(ataque.iloc[0]["CLUBE"]))
