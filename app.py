@@ -228,9 +228,8 @@ elif pagina == "📊 Invencibilidade":
 elif pagina == "🔥 Melhores Ataques":
     df = cla.copy()
     df = df.sort_values(by=["GOLS", "J"], ascending=[False, True]).reset_index(drop=True)
-    df["POS"] = df[["GOLS", "J"]].apply(tuple, axis=1).rank(method="min", ascending=False).astype(int)
-    df = df.sort_values(by="POS")
-    df["POS"] = df["POS"].apply(ordinal)
+    df["POS"] = (df.index + 1).astype(str) + "º"
+    st.dataframe(df[["POS","CLUBE","GOLS","J"]], use_container_width=True, hide_index=True)
 
 elif pagina == "📈 Média de Gols":
     df = cla.copy()
@@ -245,9 +244,8 @@ elif pagina == "📈 Média de Gols":
 elif pagina == "🏆 Vitórias":
     df = cla.copy()
     df = df.sort_values(by=["V", "J"], ascending=[False, True]).reset_index(drop=True)
-    df["POS"] = df[["V", "J"]].apply(tuple, axis=1).rank(method="min", ascending=False).astype(int)
-    df = df.sort_values(by="POS")
-    df["POS"] = df["POS"].apply(ordinal)
+    df["POS"] = (df.index + 1).astype(str) + "º"
+    st.dataframe(df[["POS","CLUBE","V","J"]], use_container_width=True, hide_index=True)
     
 elif pagina == "🛡️ Média de Gols Levados":
     df = cla.copy()
@@ -267,10 +265,9 @@ elif pagina == "🚫 Clean Sheets":
     coluna = "CL_SH" if "CL_SH" in cla.columns else "CL SH"
     df = cla.copy()
     df = df.sort_values(by=[coluna, "J"], ascending=[False, True]).reset_index(drop=True)
-    df["POS"] = df[[coluna, "J"]].apply(tuple, axis=1).rank(method="min", ascending=False).astype(int)
-    df = df.sort_values(by="POS")
-    df["POS"] = df["POS"].apply(ordinal)
-
+    df["POS"] = (df.index + 1).astype(str) + "º"
+    st.dataframe(df[["POS","CLUBE",coluna,"J"]], use_container_width=True, hide_index=True)
+    
 elif pagina == "📅 Jogos por equipe":
     df = ranking(cla.copy(), ["J"], [False])
     st.dataframe(df[["POS","CLUBE","J"]], use_container_width=True, hide_index=True)
