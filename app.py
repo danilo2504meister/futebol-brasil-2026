@@ -188,8 +188,7 @@ if pagina == "🏠 Home":
 
         card("Invencibilidade", f"{' | '.join(inv_home['CLUBE'])} - {int(max_inv)} jogos", "📊", escudo_time(inv_home.iloc[0]["CLUBE"]))
 
-        card("Mais jogos", f"{' | '.join(jogos['CLUBE'])} - {int(max_j)} jogos", "📅", escudo_time(jogos.iloc[0]["CLUBE"]))
-
+       
     with col2:
         card("Média de gols", f"{' | '.join(mg['CLUBE'])} - {mg.iloc[0]['MG']:.2f}", "📈", escudo_time(mg.iloc[0]["CLUBE"]))
 
@@ -198,6 +197,8 @@ if pagina == "🏠 Home":
         card("Defesa", f"{md.iloc[0]['CLUBE']} - {md.iloc[0]['MD']:.2f}", "🛡️", escudo_time(md.iloc[0]["CLUBE"]))
 
         card("Aproveitamento", f"{apr.iloc[0]['CLUBE']} - {apr.iloc[0]['APROVEITAMENTO']}%", "📊", escudo_time(apr.iloc[0]["CLUBE"]))
+
+        card("Mais jogos", f"{' | '.join(jogos['CLUBE'])} - {int(max_j)} jogos", "📅", escudo_time(jogos.iloc[0]["CLUBE"]))
         
 # ========================
 # PÁGINAS AJUSTADAS
