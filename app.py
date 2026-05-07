@@ -436,7 +436,7 @@ elif pagina == "🔥 Melhores Ataques":
         "GOLS",
         "J",
         False,
-        False
+        True
     )
 
     st.dataframe(
@@ -482,7 +482,7 @@ elif pagina == "🏆 Vitórias":
         "V",
         "J",
         False,
-        False
+        True
     )
 
     st.dataframe(
@@ -544,7 +544,7 @@ elif pagina == "🚫 Clean Sheets":
         coluna,
         "J",
         False,
-        False
+        True
     )
 
     st.dataframe(
