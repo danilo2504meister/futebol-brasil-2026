@@ -333,7 +333,7 @@ if pagina == "🏠 Home":
         )
 
         card(
-            "Invencibilidade",
+            "Invencibilidade Atual",
             f"{' | '.join(inv_home['CLUBE'])} - {int(max_inv)} jogos",
             "📊",
             escudo_time(inv_home.iloc[0]["CLUBE"])
@@ -342,28 +342,28 @@ if pagina == "🏠 Home":
     with col2:
 
         card(
-            "Média de gols",
+            "Melhor Média de gols",
             f"{' | '.join(mg['CLUBE'])} - {mg.iloc[0]['MG']:.2f}",
             "📈",
             escudo_time(mg.iloc[0]["CLUBE"])
         )
 
         card(
-            "Vitórias",
+            "Mais Vitórias",
             f"{' | '.join(vit['CLUBE'])} - {int(max_v)}",
             "🏆",
             escudo_time(vit.iloc[0]["CLUBE"])
         )
 
         card(
-            "Defesa",
+            "Melhor Média Defesa",
             f"{md.iloc[0]['CLUBE']} - {md.iloc[0]['MD']:.2f}",
             "🛡️",
             escudo_time(md.iloc[0]["CLUBE"])
         )
 
         card(
-            "Aproveitamento",
+            "Melhor Aproveitamento",
             f"{apr.iloc[0]['CLUBE']} - {apr.iloc[0]['APROVEITAMENTO']}%",
             "📊",
             escudo_time(apr.iloc[0]["CLUBE"])
