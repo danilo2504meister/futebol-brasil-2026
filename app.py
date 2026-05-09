@@ -313,7 +313,7 @@ if pagina == "🏠 Home":
         if artilheiro_ext is not None:
 
             card(
-                "Artilheiro Estrangeiro",
+                "Art. Estrangeiro",
                 f"{artilheiro_ext['JOGADOR']} - {int(artilheiro_ext['GOLS'])} gols",
                 "🌍",
                 escudo_time(artilheiro_ext["CLUBE"])
