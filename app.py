@@ -193,13 +193,13 @@ estrangeiros = art[
     &
     (art["PAIS"].str.strip() != "")
     &
-    (~art["PAIS"].str.upper().isin(["BRA", "BRASIL"]))
+    (~art["PAIS"].str.capitalize().isin(["BRA", "Brasil"]))
 ].copy()
 
 estrangeiros["PAIS"] = (
     estrangeiros["PAIS"]
     .str.strip()
-    .str.upper()
+    .str.capitalize()
 )
 
 ranking_pais = (
