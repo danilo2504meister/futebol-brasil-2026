@@ -146,7 +146,7 @@ def card(titulo, conteudo, icone="", escudo=None):
 # ========================
 # DADOS
 # ========================
-@st.cache_data
+@st.cache_data(ttl=60)
 def carregar():
 
     art = pd.read_excel("br26.xlsx", sheet_name="ART")
