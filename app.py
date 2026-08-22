@@ -217,6 +217,7 @@ DATA_ATUALIZACAO = "18/08/2026"
 # ========================
 menu = [
     "🏠 Home",
+    "🏆 Classificação",
     "🥇 Artilheiros",
     "🌍 Artilheiros Estrangeiros",
     "🌎 Gols por País",
@@ -299,9 +300,18 @@ if pagina == "🏠 Home":
     max_j = cla["J"].max()
     jogos = cla[cla["J"] == max_j]
 
+    lider = cla.iloc[0]
+
     col1, col2 = st.columns(2)
 
     with col1:
+
+        card(
+            "Líder",
+            f"{lider['CLUBE']} - {int(lider['PTS'])} pts",
+            "🏆",
+            escudo_time(lider["CLUBE"])
+        )
 
         card(
             "Artilheiro",
@@ -379,6 +389,16 @@ if pagina == "🏠 Home":
 # ========================
 # TABELAS
 # ========================
+elif pagina == "🏆 Classificação":
+
+    df = cla.copy()
+
+    st.dataframe(
+        df[["POS", "CLUBE", "PTS", "J", "V", "E", "D", "SALDO"]],
+        use_container_width=True,
+        hide_index=True
+    )
+
 elif pagina == "🥇 Artilheiros":
 
     df = ranking(art.copy(), ["GOLS"], [False])
